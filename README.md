@@ -25,6 +25,35 @@ Copy `.env.example` to `.env.local` and fill it in to enable the newsletter and
 contact forms. Without it both endpoints return `503` and the forms say so —
 they never report a success that did not happen.
 
+## Editing content
+
+Two ways, same files, same validation.
+
+**Locally** — `npm run dev`, then http://localhost:3000/keystatic. Writes MDX
+straight into `content/`; you commit and push as usual. No auth, no setup.
+
+**From anywhere** — the deployed `/keystatic` commits to this repo through a
+GitHub App. It stays in local mode until three secrets are present, so the site
+can always deploy without it. To turn it on:
+
+1. Deploy the site, then open `https://<your-domain>/keystatic`.
+2. Follow the setup screen. It creates the GitHub App for you and shows the
+   values for `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`,
+   `KEYSTATIC_SECRET` and `NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`.
+3. Put them in your host's environment variables and redeploy.
+
+The admin URL is publicly reachable once deployed — that is how the design
+works, not an oversight. The shell loads for anyone, but every read and write
+uses the visitor's own GitHub token, so only accounts with write access to this
+repo can change anything. There is no separate admin password to leak.
+
+Each save is a real commit, so CI runs and the site redeploys. A save that
+breaks a schema fails the build instead of corrupting the site.
+
+⚠ `keystatic.config.ts` shapes the frontmatter; the zod schemas in `lib/*.ts`
+enforce it. They are separate and must stay in step — where they disagree, zod
+wins and the build fails.
+
 ## Design system
 
 `docs/ui-ux-spec.md` is the contract; `styles/tokens.css` is the executable half.

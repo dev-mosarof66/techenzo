@@ -26,11 +26,44 @@ const tags = fields.array(fields.text({ label: "Tag" }), {
   itemLabel: (props) => props.value,
 });
 
+/**
+ * GitHub mode needs all three server secrets. Without them Keystatic's API
+ * route throws at build time — which would mean the whole site could not deploy
+ * until the CMS was configured. Falling back to local keeps deployment
+ * independent of the admin: set the variables and GitHub mode turns itself on
+ * at the next build.
+ */
+const githubConfigured = Boolean(
+  process.env.KEYSTATIC_GITHUB_CLIENT_ID &&
+    process.env.KEYSTATIC_GITHUB_CLIENT_SECRET &&
+    process.env.KEYSTATIC_SECRET,
+);
+
 export default config({
-  // Local storage writes straight to the working tree — the right mode while
-  // this runs on your machine. Switching to GitHub storage (so you can edit
-  // from anywhere) is a change to this one object; see docs/authoring.md.
-  storage: { kind: "local" },
+  /**
+   * Local in development, GitHub in production.
+   *
+   * Local writes straight to the working tree, so editing on this machine stays
+   * instant and needs no auth — you commit the result yourself.
+   *
+   * The deployed admin commits to GitHub through an App, which means editing
+   * from a phone or someone else's laptop without a checkout. Two consequences
+   * worth being explicit about:
+   *
+   *  - The admin URL is publicly reachable on the deployed site. That is by
+   *    design: the shell loads for anyone, but every read and write is made
+   *    with the visitor's own GitHub token, so only accounts with write access
+   *    to the repo can change anything. There is no separate password to leak.
+   *  - Each save is a real commit, so CI runs and the site redeploys. A save
+   *    that breaks a zod schema fails the build rather than corrupting the site.
+   */
+  storage:
+    process.env.NODE_ENV === "development" || !githubConfigured
+      ? { kind: "local" }
+      : {
+          kind: "github",
+          repo: { owner: "dev-mosarof66", name: "techenzo" },
+        },
 
   ui: {
     brand: { name: "Techenzo" },

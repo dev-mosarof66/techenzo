@@ -58,8 +58,20 @@ export function middleware(request: NextRequest) {
   const admin = isAdmin(request.nextUrl.pathname);
   const csp = admin
     ? buildCsp(nonce, isDev)
-        .replace("style-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
+        // The admin loads a webfont, talks to the GitHub API, shows avatars,
+        // and redirects through GitHub to authorise. None of that is opened to
+        // the public site.
+        .replace(
+          "style-src 'self' 'unsafe-inline'",
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        )
         .replace("font-src 'self'", "font-src 'self' https://fonts.gstatic.com")
+        .replace("connect-src 'self'", "connect-src 'self' https://api.github.com")
+        .replace(
+          "img-src 'self' data: blob:",
+          "img-src 'self' data: blob: https://avatars.githubusercontent.com",
+        )
+        .replace("form-action 'self'", "form-action 'self' https://github.com")
     : buildCsp(nonce, isDev);
 
   // Pass the nonce forward so the layout can read it via headers().
