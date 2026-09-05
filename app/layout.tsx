@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/config/site";
 import { ThemeScript } from "@/components/theme/theme-script";
 import "./globals.css";
@@ -124,7 +125,24 @@ export default async function RootLayout({
       <head>
         <ThemeScript nonce={nonce} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/*
+          Web Analytics. Renders null and injects /_vercel/insights/script.js
+          from the client at runtime, which is why it needs no nonce prop even
+          under our CSP: `strict-dynamic` propagates trust from an already
+          nonce-allowed script to the scripts it creates, so the injected tag
+          inherits permission from the React bundle that appended it. Note that
+          `'self'` in script-src does NOT do this work — supporting browsers
+          ignore host-source expressions entirely once `strict-dynamic` is
+          present. The view beacon is same-origin, so `connect-src 'self'` covers
+          it too.
+
+          No-op off Vercel: the script path 404s locally, so `next dev` reports
+          nothing and no data leaves a developer machine.
+        */}
+        <Analytics />
+      </body>
     </html>
   );
 }
