@@ -28,6 +28,13 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
+/**
+ * Google Search Console ownership token for techenzo.vercel.app, issued
+ * 2026-09-05. Public by design — see the note on `verification` below.
+ * Replace this when the property moves to a custom domain.
+ */
+const GOOGLE_SITE_VERIFICATION = "ddPdbIbBkeQgGWoWvhjulP7ZUdwIjvS5gHxQsMLM8sI";
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
@@ -61,17 +68,25 @@ export const metadata: Metadata = {
   /**
    * Search Console / Bing Webmaster ownership tokens.
    *
-   * These come from the environment rather than a checked-in constant because
-   * they are per-property: a preview deployment or a fork that shipped the
-   * production token would be claiming a domain it does not own. When the var
-   * is unset the key resolves to undefined and Next omits the tag entirely,
-   * which is the correct state for every environment except production.
+   * The Google token is checked in rather than kept in the environment, which
+   * is safe: it is a public value by construction — it ships in the <head> of
+   * every page, so anyone can already read it. It proves nothing on its own
+   * either. Verification says "whoever controls this site also controls this
+   * Search Console account"; a copy of the token on someone else's deployment
+   * lets them verify THEIR site, never ours, and grants no access to our
+   * property or its data.
    *
-   * The DNS TXT verification method needs none of this — prefer it if you have
-   * registrar access, because it survives a redeploy that drops the env var.
+   * The trade for checking it in is that verification survives a redeploy, a
+   * new Vercel project, or an environment that was never configured — an
+   * ownership proof that silently disappears when a variable goes missing is
+   * the failure mode worth designing out, because Search Console stops
+   * reporting the moment it can no longer confirm the site.
+   *
+   * The env var still wins when set, so a fork or a second property can
+   * override without touching this file.
    */
   verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION,
+    google: process.env.GOOGLE_SITE_VERIFICATION ?? GOOGLE_SITE_VERIFICATION,
     other: process.env.BING_SITE_VERIFICATION
       ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
       : {},
