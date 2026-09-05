@@ -1,0 +1,39 @@
+---
+title: Build log — the content pipeline
+description: Notes from wiring MDX, Shiki and frontmatter validation into the site, in the order it actually happened.
+type: build-log
+publishedAt: "2026-09-04"
+tags:
+  - Build log
+  - Next.js
+draft: true
+---
+
+<Callout label="Draft">
+A seed file demonstrating the build-log format — same pipeline as an article,
+different typographic treatment. Marked `draft: true`.
+</Callout>
+
+Build logs are written in the interface face at interface size, with a tighter
+rhythm. They are notes, not essays, and the typography should say so before the
+first sentence does.
+
+## 2026-09-04 — frontmatter that fails loudly
+
+Content is validated with zod at load time rather than cast. A missing
+`conditions` line or a malformed date fails the build with the filename
+attached, which is the only moment anyone is actually going to fix it.
+
+Two rules ended up being worth enforcing in code rather than in a style guide:
+an experiment without a `## Limitations` section will not build, and a product
+marked `launched` with no URL will not build either.
+
+## 2026-09-04 — drafts stay on localhost
+
+Every loader filters `draft: true` in production, and the sitemap and feed are
+computed from the same filtered list. That makes it safe to keep working notes
+in the repo — there is no path by which one reaches a reader.
+
+## Next
+
+Newsletter endpoint, then the accessibility pass.

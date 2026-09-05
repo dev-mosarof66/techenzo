@@ -1,0 +1,164 @@
+---
+id: EXP-000
+title: The experiment format
+description: How a Techenzo experiment is written — the sections, the components available, and the rules the loader enforces at build time.
+hypothesis: A fixed format makes results comparable across experiments, and makes a weak experiment obvious before it is published.
+conditions: Illustrative only — this file documents the format and contains no measurements.
+publishedAt: "2026-09-05"
+tags:
+  - Format
+  - Meta
+draft: true
+results:
+  - metric: p95 latency
+    value: 31 ms
+    baseline: 42 ms
+    direction: improvement
+    change: down
+  - metric: recall@10
+    value: "0.94"
+    baseline: "0.91"
+    direction: improvement
+    change: up
+  - metric: index build
+    value: 4m 12s
+    baseline: 3m 02s
+    direction: regression
+    change: up
+charts:
+  - id: latency-by-size
+    title: p95 retrieval latency by index size
+    note: Lower is better - placeholder data
+    unit: ms
+    categories: ["100k", "500k", "1M"]
+    series:
+      - name: pgvector
+        values: [18, 29, 42]
+      - name: Qdrant
+        values: [14, 21, 31]
+---
+
+<Callout label="Read this first">
+This file is the format reference, not a result. Every number below is a
+placeholder chosen to demonstrate a component. It is marked `draft: true`, so it
+renders on localhost and is excluded from the production build, the sitemap and
+the RSS feed.
+</Callout>
+
+Copy this file, change the frontmatter, replace the prose, and delete this
+callout. The section headings below are the expected order, and the loader
+refuses to build without a `## Limitations` section.
+
+## Problem
+
+Open with the problem in the reader's terms, not the system's. Two or three
+sentences. Someone who has this problem should recognise it in the first line
+and someone who does not should be able to stop reading here.
+
+Avoid framing the problem as an opportunity to use a technology. "Retrieval gets
+slow past a million vectors" is a problem. "We wanted to explore vector
+databases" is not.
+
+## Method
+
+State the conditions before the results, because the conditions are what make
+the results mean anything. Hardware, versions, dataset, number of runs, and
+which percentile is being reported.
+
+| Setting  | Value                    |
+| -------- | ------------------------ |
+| Hardware | m5.large, 2 vCPU, 8GB    |
+| Dataset  | 1M vectors, 768 dims     |
+| Index    | HNSW, m=16, ef=64        |
+| Runs     | 10, warm cache           |
+| Reported | p95                      |
+
+The `conditions` field in the frontmatter is required and prints at the foot of
+the article. A figure without stated conditions does not ship.
+
+## Implementation
+
+Code blocks are highlighted at build time with Shiki, using a theme built from
+the site palette — keywords take the accent, strings the aqua series slot. This
+costs zero client JavaScript; the only script on the page is the copy button.
+
+Add a filename after the language and it appears in the header strip:
+`` ```ts title="lib/search.ts" ``. Leave it off and the block still gets its
+language and a copy button.
+
+```ts title="lib/search.ts"
+// Query the same way in both engines so the comparison is honest.
+async function search(query: number[], k = 10) {
+  const rows = await sql`
+    select id, embedding <=> ${query} as distance
+    from documents
+    order by distance
+    limit ${k}
+  `;
+  return rows.map((row) => row.id);
+}
+```
+
+## Results
+
+`<Metrics />` renders the `results` array from the frontmatter. Binding it to
+frontmatter rather than writing the numbers inline means the figures in the body
+and the figures on the Lab index cannot drift apart.
+
+<Metrics />
+
+`<Chart id="…" />` renders a chart defined in this file's `charts` frontmatter.
+The data lives there rather than in JSX props so it is validated at load time —
+a series with the wrong number of values fails the build with a filename
+attached. Conditions are not a prop either: they come from `conditions`, so a
+figure cannot be published without its method.
+
+<Chart id="latency-by-size" />
+
+The chart refuses to render past six series, refuses a series whose value count
+does not match the categories, and always ships the same numbers as a table.
+It is HTML and CSS on the server — no charting library, and the tooltip is
+CSS-only. A benchmark chart that cost 40KB of JavaScript would be arguing
+against its own numbers.
+
+Each metric carries two separate facts: whether the change was good news
+(colour, plus a screen-reader label) and which way the number moved (the arrow).
+Latency improving goes down and recall improving goes up — one field cannot
+express both, so the frontmatter has `direction` and `change`.
+
+## Analysis
+
+Explain the mechanism, not just the delta. A result without an explanation is a
+number; a result with one is knowledge that transfers to the next problem.
+
+If something surprised you, say so. If a result contradicts the hypothesis, that
+is a finding worth publishing, not a failure worth hiding.
+
+## What we learned
+
+- The takeaway a reader can act on tomorrow, stated as a rule of thumb.
+- Where the effect stops holding.
+- What you would measure next.
+
+Three to five bullets. If it takes more, the experiment was testing too much.
+
+## Limitations
+
+**Mandatory.** The loader fails the build if this section is missing.
+
+- What the experiment did not test.
+- Where the workload differs from production.
+- Any result inside the noise band that should not be read as a difference.
+
+An experiment without stated limits is marketing.
+
+## Reproduce
+
+Link the repo and give the exact commands. If a reader cannot re-run it, the
+numbers are a claim rather than a measurement.
+
+```bash title="terminal"
+git clone https://github.com/techenzo/retrieval-bench
+cd retrieval-bench
+pnpm install && pnpm bench --dataset 1m --runs 10
+```

@@ -1,0 +1,46 @@
+---
+title: How writing works here
+description: Three content types, what each one promises a reader, and why they are kept apart instead of collapsed into a blog.
+type: article
+publishedAt: "2026-09-05"
+tags:
+  - Format
+  - Meta
+draft: true
+---
+
+<Callout label="Draft">
+A seed file demonstrating the article format. Marked `draft: true`, so it renders
+on localhost and is excluded from the production build, the sitemap and the feed.
+Replace it with the first real piece.
+</Callout>
+
+An article is the finished form. It makes an argument, it is meant to still be
+true in a year, and it earns the serif column and the reading time estimate at
+the top. If a piece is not ready to be defended, it is a build log.
+
+## Why not just call it a blog
+
+"Blog" is a container, not a promise. It lets a half-formed thought inherit the
+authority of a finished piece, and it gives a reader no way to calibrate how
+much weight to put on what they are reading.
+
+Three named types fix that, because each one sets a different expectation:
+
+- **Article** — argued and finished. Serif body, full reading treatment.
+- **Build log** — dated and provisional. Sans body, tighter rhythm, written while the thing was happening.
+- **Note** — one idea, short, no preamble.
+
+The type is set in frontmatter and shows up three times: as a label on the
+index, as a coloured left rule beside it, and as the eyebrow on the piece
+itself. The label is the real signal — the colour is a shortcut for people who
+can use it, never the only cue.
+
+## What belongs in an article
+
+Something a reader can act on, with the reasoning attached. If the piece is
+mostly numbers, it is probably an experiment and belongs in the Lab, with a
+short article pointing at it.
+
+Cross-link the two with the `experiment` field in frontmatter, and a callout to
+the measurements appears at the foot of the article automatically.

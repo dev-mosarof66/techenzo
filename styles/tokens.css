@@ -1,0 +1,419 @@
+/* ==========================================================================
+   Techenzo — design tokens
+   The executable half of docs/ui-ux-spec.md. Import at the top of globals.css.
+
+   Theme model: DARK IS THE DEFAULT. Light is a first-class alternate.
+     - :root                                   -> dark values
+     - @media (prefers-color-scheme: light)    -> light, unless the user stamped dark
+     - :root[data-theme="light"]               -> light, wins over the OS
+   The inline no-flash script in <head> stamps data-theme before first paint.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Primitives — never referenced directly in components. Semantic only.
+   -------------------------------------------------------------------------- */
+:root {
+  --ink-950: #0a0b0d;
+  --ink-900: #101215;
+  --ink-850: #16181c;
+  --ink-800: #1d2025;
+  --ink-700: #2a2e35;
+  --ink-600: #3d434c;
+  --ink-500: #5a616b;
+  --ink-400: #838a94;
+  --ink-300: #aeb4bc;
+  --ink-200: #d2d6db;
+  --ink-100: #e7e9ec;
+  --ink-50:  #f4f5f7;
+  --paper:   #fbfbfa;
+
+  --signal-700: #94321b;
+  --signal-600: #c43a1e;
+  --signal-500: #d9431f; /* decoration only — 4.25:1 on paper, fails AA for text */
+  --signal-400: #ff5a33;
+  --signal-300: #ff8266;
+  --signal-100: #f7b5a3;
+  --signal-50:  #fbdcd3;
+}
+
+/* --------------------------------------------------------------------------
+   2. Semantic colour — dark (default)
+   -------------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+
+  --bg: var(--ink-900);
+  --bg-raised: var(--ink-850);
+  --bg-sunken: var(--ink-950);
+  --bg-code: var(--ink-950);
+
+  --text: var(--ink-50);            /* 17.20:1 */
+  --text-secondary: var(--ink-300); /*  8.98:1 */
+  --text-muted: var(--ink-400);     /*  5.39:1 */
+
+  --border: var(--ink-700);         /* decorative rules */
+  --border-strong: var(--ink-600);  /* structural dividers */
+  --border-control: var(--ink-500); /* 3.00:1 — inputs, focusable outlines */
+
+  --accent: var(--signal-400);      /*  6.04:1 */
+  --accent-hover: var(--signal-300);
+  --accent-pressed: var(--signal-700);
+  --accent-contrast: var(--ink-950); /* 6.34:1 on filled accent */
+  --focus-ring: var(--signal-400);
+  --selection-bg: rgb(255 90 51 / 0.28);
+
+  /* status — always paired with a text label, never colour alone */
+  --status-idea: #838a94;
+  --status-building: #f0b84e;  /* 10.43:1 */
+  --status-beta: #4fbfae;      /*  8.39:1 */
+  --status-launched: #4cc77f;  /*  8.74:1 */
+  --status-archived: #818892; /* 4.68:1 on its own 10% tint */
+  --status-regression: #e66767;
+
+  /* chart — categorical, fixed slot order, never cycled.
+     Slots 1-3 are all-pairs safe (scatter/bubble/small multiples).
+     All 6 are adjacent-pairs safe (bars/stacks/lines). */
+  --series-1: #ef4f2a;
+  --series-2: #3987e5;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #9085e9;
+  --series-6: #d55181;
+
+  /* chart — sequential (single hue, light -> dark) */
+  --seq-100: #fbdcd3; --seq-150: #f9cabc; --seq-200: #f7b5a3; --seq-250: #f39d85;
+  --seq-300: #ef8365; --seq-350: #e96a48; --seq-400: #dd5330; --seq-450: #c74627;
+  --seq-500: #b03c21; --seq-550: #94321b; --seq-600: #7a2915; --seq-650: #632010;
+
+  /* chart — diverging poles + neutral midpoint */
+  --div-neg: #2a78d6;
+  --div-mid: #383835;
+  --div-pos: #d9431f;
+
+  --chart-grid: var(--border);
+  --chart-axis: var(--border-strong);
+}
+
+/* --------------------------------------------------------------------------
+   3. Semantic colour — light
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+
+    --bg: var(--paper);
+    --bg-raised: var(--ink-50);
+    --bg-sunken: var(--ink-100);
+    --bg-code: var(--ink-850); /* code stays dark in both themes */
+
+    --text: var(--ink-900);            /* 18.12:1 */
+    --text-secondary: var(--ink-600);  /*  9.63:1 */
+    --text-muted: var(--ink-500);      /*  6.04:1 */
+
+    --border: var(--ink-100);
+    --border-strong: var(--ink-200);
+    --border-control: var(--ink-400);  /* 3.36:1 */
+
+    --accent: var(--signal-600);       /*  5.11:1 */
+    --accent-hover: var(--signal-500);
+    --accent-pressed: var(--signal-700);
+    --accent-contrast: #ffffff;        /* 5.29:1 on filled accent */
+    --focus-ring: var(--signal-600);
+    --selection-bg: rgb(196 58 30 / 0.16);
+
+    --status-idea: #5a616b;
+    --status-building: #8a5a0b;  /* 5.72:1 */
+    --status-beta: #0c776b;      /* 4.58:1 on its own 10% tint */
+    --status-launched: #1c774a;  /* 4.68:1 on its own 10% tint */
+    --status-archived: #656c76;  /* 4.52:1 on its own 10% tint */
+    --status-regression: #c0342f;
+
+    --series-1: #d9431f;
+    --series-2: #2a78d6;
+    --series-3: #0f8f63;
+    --series-4: #eda100; /* 2.09:1 — relief rule: direct labels or table view */
+    --series-5: #4a3aa7;
+    --series-6: #e87ba4; /* 2.60:1 — relief rule: direct labels or table view */
+
+    --div-mid: #f0efec;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: var(--paper);
+  --bg-raised: var(--ink-50);
+  --bg-sunken: var(--ink-100);
+  --bg-code: var(--ink-850);
+
+  --text: var(--ink-900);
+  --text-secondary: var(--ink-600);
+  --text-muted: var(--ink-500);
+
+  --border: var(--ink-100);
+  --border-strong: var(--ink-200);
+  --border-control: var(--ink-400);
+
+  --accent: var(--signal-600);
+  --accent-hover: var(--signal-500);
+  --accent-pressed: var(--signal-700);
+  --accent-contrast: #ffffff;
+  --focus-ring: var(--signal-600);
+  --selection-bg: rgb(196 58 30 / 0.16);
+
+  --status-idea: #5a616b;
+  --status-building: #8a5a0b;
+  --status-beta: #0c776b;
+  --status-launched: #1c774a;
+  --status-archived: #656c76;
+  --status-regression: #c0342f;
+
+  --series-1: #d9431f;
+  --series-2: #2a78d6;
+  --series-3: #0f8f63;
+  --series-4: #eda100;
+  --series-5: #4a3aa7;
+  --series-6: #e87ba4;
+
+  --div-mid: #f0efec;
+}
+
+/* --------------------------------------------------------------------------
+   4. Typography
+   -------------------------------------------------------------------------- */
+:root {
+  --font-sans: "Geist Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+
+  --text-display-1: clamp(2.75rem, 1.55rem + 5.1vw, 5.25rem);
+  --text-display-2: clamp(2.25rem, 1.55rem + 3vw, 3.75rem);
+  --text-h1: clamp(2rem, 1.5rem + 2.1vw, 3rem);
+  --text-h2: clamp(1.5rem, 1.25rem + 1.05vw, 2rem);
+  --text-h3: 1.25rem;
+  --text-h4: 1.0625rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-caption: 0.8125rem;
+  --text-kicker: 0.75rem;
+  --text-mono-sm: 0.8125rem;
+  --text-metric: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  --text-prose: 1.1875rem;
+  --text-prose-lead: 1.375rem;
+
+  --leading-display: 0.95;
+  --leading-tight: 1.08;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --leading-prose: 1.75;
+
+  --tracking-display: -0.035em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-kicker: 0.14em;
+
+  --measure-prose: 68ch;
+  --measure-copy: 62ch;
+}
+
+/* --------------------------------------------------------------------------
+   5. Space, layout, radius, shadow
+   -------------------------------------------------------------------------- */
+:root {
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;
+  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;  --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-24: 96px;
+  --space-32: 128px; --space-40: 160px;
+
+  --container-prose: 720px;
+  --container-default: 1200px;
+  --container-wide: 1440px;
+
+  --gutter: 16px;
+  --page-pad: 20px;
+  --section-pad: var(--space-16);
+
+  --radius-none: 0;
+  --radius-sm: 2px;   /* buttons, inputs, cards */
+  --radius-md: 4px;   /* media frames, code blocks */
+  --radius-pill: 999px; /* status chips and tag pills ONLY */
+
+  --hairline: 1px;
+
+  /* the ONLY shadow in the system — floating layers only, never content */
+  --shadow-layer: 0 8px 32px rgb(0 0 0 / 0.45);
+
+  --nav-height: 64px;
+  --z-nav: 50;
+  --z-progress: 55; /* above the nav, below the mobile sheet */
+  --z-sheet: 60;
+  --z-toast: 70;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --shadow-layer: 0 8px 32px rgb(0 0 0 / 0.1); }
+}
+:root[data-theme="light"] { --shadow-layer: 0 8px 32px rgb(0 0 0 / 0.1); }
+
+@media (min-width: 640px) {
+  :root { --page-pad: 32px; --section-pad: var(--space-24); }
+}
+@media (min-width: 768px) {
+  :root { --gutter: 24px; }
+}
+@media (min-width: 1024px) {
+  :root { --page-pad: 40px; --section-pad: var(--space-32); }
+}
+
+/* --------------------------------------------------------------------------
+   6. Motion
+   -------------------------------------------------------------------------- */
+:root {
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 280ms;
+  --dur-deliberate: 420ms;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --stagger: 60ms;
+}
+
+/* --------------------------------------------------------------------------
+   7. Signature devices
+   -------------------------------------------------------------------------- */
+
+/* (c) grid field — permitted in exactly three places:
+   homepage hero, /lab hero, /404. Nowhere else. */
+.grid-field {
+  position: relative;
+  isolation: isolate;
+}
+.grid-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.35;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 0%, transparent 75%);
+}
+
+/* (b) corner registration ticks — zero JS */
+.ticks {
+  position: relative;
+}
+.ticks::before,
+.ticks::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--border-strong);
+  border-style: solid;
+  transition: width var(--dur-fast) var(--ease-standard),
+              height var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-fast) var(--ease-standard);
+  pointer-events: none;
+}
+.ticks::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.ticks::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+.ticks:hover::before,
+.ticks:hover::after,
+.ticks:focus-within::before,
+.ticks:focus-within::after {
+  width: 12px;
+  height: 12px;
+  border-color: var(--accent);
+}
+
+/* link underline draw — inline prose and nav links */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size var(--dur-base) var(--ease-standard);
+}
+.link-draw:hover,
+.link-draw:focus-visible { background-size: 100% 1px; }
+
+/* --------------------------------------------------------------------------
+   8. Scroll reveal — CSS + IntersectionObserver, no motion library.
+   The observer flips data-reveal="idle" to "in". Reduced motion resolves to
+   the final state so content is NEVER left at opacity 0.
+   -------------------------------------------------------------------------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--dur-deliberate) var(--ease-entrance),
+              transform var(--dur-deliberate) var(--ease-entrance);
+  transition-delay: calc(var(--reveal-index, 0) * var(--stagger));
+}
+[data-reveal="in"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   9. Base
+   -------------------------------------------------------------------------- */
+::selection { background: var(--selection-bg); }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-height) + 24px); }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* numbers that align or update always use tabular figures */
+.tnum, table td, .metric, .mono { font-variant-numeric: tabular-nums; }
+
+/* --------------------------------------------------------------------------
+   10. Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+}
+
+/* --------------------------------------------------------------------------
+   11. Forced colors
+   -------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  :root {
+    --border: CanvasText;
+    --border-strong: CanvasText;
+    --border-control: CanvasText;
+    --accent: LinkText;
+  }
+  .grid-field::before { display: none; }
+  .ticks::before, .ticks::after { border-color: CanvasText; }
+}

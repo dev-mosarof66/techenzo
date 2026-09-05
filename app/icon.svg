@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <title>Techenzo</title>
+  <!--
+    The wordmark glyph at favicon scale — a hairline square with an offset fill,
+    the registration-tick language compressed to one mark. Geometry is scaled
+    from the 18px header glyph (1px border, 6px fill inset 4px), with the stroke
+    thickened so it survives 16px rendering.
+
+    The interior is painted with the brand's default surface rather than left
+    transparent: it keeps one identity on light and dark tab bars instead of
+    changing appearance between them.
+  -->
+  <rect x="1.5" y="1.5" width="29" height="29" fill="#101215" stroke="#FF5A33" stroke-width="3" />
+  <rect x="15" y="6" width="10" height="10" fill="#FF5A33" />
+</svg>

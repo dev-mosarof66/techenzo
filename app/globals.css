@@ -1,0 +1,464 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@source "../app";
+@source "../components";
+@source "../config";
+
+/* ============================================================================
+   FONT WIRING
+   tokens.css declares --font-sans/serif/mono against the family names. Here we
+   point them at the next/font variables injected on <html>, keeping the same
+   fallback stacks so metrics match and CLS stays at 0.
+
+   This block is unlayered, so it beats both tokens.css and Tailwind's
+   @layer theme defaults — which also means Tailwind's own `font-sans`,
+   `font-mono`, `rounded-sm` and `rounded-md` utilities resolve to OUR values
+   for free, because v4 utilities reference the theme variable rather than
+   inlining a literal.
+   ========================================================================= */
+:root {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", "Cascadia Mono",
+    monospace;
+}
+
+/* ============================================================================
+   TAILWIND THEME MAPPING
+   Colours only. `inline` makes each utility emit var(--x) rather than the
+   resolved value, so a theme switch repaints without regenerating classes.
+
+   Everything else (type scale, motion, radius) is either a bundled text style
+   below or read straight off the token, because those tokens carry more than
+   one property and a size-only utility would lose the rest.
+   ========================================================================= */
+@theme inline {
+  --color-canvas: var(--bg);
+  --color-raised: var(--bg-raised);
+  --color-sunken: var(--bg-sunken);
+  --color-code: var(--bg-code);
+
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-secondary);
+  --color-ink-3: var(--text-muted);
+
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-control: var(--border-control);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-pressed: var(--accent-pressed);
+  --color-on-accent: var(--accent-contrast);
+
+  --color-status-idea: var(--status-idea);
+  --color-status-building: var(--status-building);
+  --color-status-beta: var(--status-beta);
+  --color-status-launched: var(--status-launched);
+  --color-status-archived: var(--status-archived);
+  --color-status-regression: var(--status-regression);
+
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-series-5: var(--series-5);
+  --color-series-6: var(--series-6);
+}
+
+/* ============================================================================
+   TYPE SCALE — spec §3.2
+   Bundled text styles: size + leading + tracking + weight travel together,
+   because that is what the scale actually specifies.
+   ========================================================================= */
+@utility t-display-1 {
+  font-size: var(--text-display-1);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 500;
+}
+@utility t-display-2 {
+  font-size: var(--text-display-2);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+@utility t-h1 {
+  font-size: var(--text-h1);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 500;
+}
+@utility t-h2 {
+  font-size: var(--text-h2);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+@utility t-h3 {
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+@utility t-h4 {
+  font-size: var(--text-h4);
+  line-height: 1.4;
+  font-weight: 500;
+}
+@utility t-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: 1.65;
+}
+@utility t-body {
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+}
+@utility t-body-sm {
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+}
+@utility t-caption {
+  font-size: var(--text-caption);
+  line-height: 1.45;
+}
+@utility t-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-kicker);
+  line-height: 1;
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+@utility t-mono-sm {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+@utility t-metric {
+  font-family: var(--font-mono);
+  font-size: var(--text-metric);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+@utility t-prose {
+  font-family: var(--font-serif);
+  font-size: var(--text-prose);
+  line-height: var(--leading-prose);
+}
+@utility t-prose-lead {
+  font-family: var(--font-serif);
+  font-size: var(--text-prose-lead);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+/* Measure caps — spec §3.3 */
+@utility measure-prose {
+  max-width: var(--measure-prose);
+}
+@utility measure-copy {
+  max-width: var(--measure-copy);
+}
+
+/* ============================================================================
+   BASE
+   ========================================================================= */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  /* The skip link is the first focusable element on every page — spec §7.4 */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+  }
+  .skip-link:focus {
+    left: var(--space-4);
+    top: var(--space-4);
+    padding: 10px 16px;
+    background: var(--accent);
+    color: var(--accent-contrast);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+  }
+}
+
+/* Mobile sheet entrance — spec §6.2.5. The reduced-motion block in
+   tokens.css collapses this to an instant state change. */
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   PROSE — spec §8.11
+   The serif body is the thing that makes an experiment read as a publication
+   rather than a landing page. Margins are set per element rather than with a
+   universal sibling selector, so custom MDX components keep their own rhythm.
+   ========================================================================= */
+.prose {
+  font-family: var(--font-serif);
+  font-size: var(--text-prose);
+  line-height: var(--leading-prose);
+  color: var(--text);
+  counter-reset: section;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote {
+  margin: 1.4em 0 0;
+}
+.prose > :first-child {
+  margin-top: 0;
+}
+
+/* Sections are numbered because an experiment genuinely is a sequence:
+   problem → method → results → limitations is the order of the argument. */
+.prose h2 {
+  counter-increment: section;
+  margin: 2.4em 0 0.6em;
+  font-family: var(--font-sans);
+  font-size: var(--text-h2);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+.prose h2::before {
+  content: counter(section, decimal-leading-zero);
+  display: block;
+  margin-bottom: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-kicker);
+  color: var(--accent);
+}
+.prose h3 {
+  margin: 1.8em 0 0.5em;
+  font-family: var(--font-sans);
+  font-size: var(--text-h3);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+.prose .heading-anchor {
+  margin-left: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.prose a:not(.heading-anchor) {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: text-decoration-color var(--dur-fast) var(--ease-standard);
+}
+.prose a:not(.heading-anchor):hover {
+  text-decoration-color: var(--accent);
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+/* Markers in muted ink; ordered lists take mono numerals to match the metrics */
+.prose ul,
+.prose ol {
+  list-style: none;
+  padding: 0;
+}
+.prose li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+.prose li + li {
+  margin-top: 0.7em;
+}
+.prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.25rem;
+  top: 0.75em;
+  width: 6px;
+  height: 1px;
+  background: var(--text-muted);
+}
+.prose ol {
+  counter-reset: item;
+}
+.prose ol > li {
+  counter-increment: item;
+}
+.prose ol > li::before {
+  content: counter(item, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  color: var(--text-muted);
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--border-strong);
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.prose hr {
+  margin: 2.4em 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+/* Inline code stays in the text colour — it is prose, not a code block */
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  padding: 0.15em 0.4em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+}
+
+/* Shiki sets its own background inline; ours wins so code matches the system */
+.prose pre {
+  margin: 0;
+  padding: 1.25rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-code) !important;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+.prose pre code {
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: var(--text-body-sm);
+}
+.prose thead th {
+  text-align: left;
+  padding: 0 1rem 0.75rem 0;
+  border-bottom: 1px solid var(--border-strong);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.prose tbody td {
+  padding: 0.75rem 1rem 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* Filter rows scroll rather than wrap into ragged lines — spec §10.
+   The fade only applies where overflow is likely; on wide screens a
+   permanently faded right edge would be a lie about there being more. */
+.filter-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.filter-scroll::-webkit-scrollbar {
+  display: none;
+}
+@media (max-width: 767px) {
+  .filter-scroll {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      #000 0,
+      #000 calc(100% - 28px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      #000 0,
+      #000 calc(100% - 28px),
+      transparent 100%
+    );
+  }
+}
+
+/* A framed code block owns the border; the <pre> inside gives up its own so
+   the header strip and the code read as one object — spec §8.12. */
+.prose .code-frame {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.prose .code-frame pre {
+  border: 0;
+  border-radius: 0;
+}
+
+/* Build logs are notes, not essays — the interface face at interface size,
+   with a tighter rhythm (spec §9.7). Everything else in .prose still applies. */
+.prose.prose-notes {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+}
+.prose.prose-notes p,
+.prose.prose-notes ul,
+.prose.prose-notes ol,
+.prose.prose-notes blockquote {
+  margin-top: 1.1em;
+}
+.prose.prose-notes h2 {
+  margin: 2em 0 0.5em;
+  font-size: var(--text-h3);
+}

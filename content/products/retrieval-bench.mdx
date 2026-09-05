@@ -1,0 +1,96 @@
+---
+name: Retrieval Bench
+tagline: Run one retrieval workload against four vector stores and get a report you can hand to a team.
+description: A benchmarking harness for RAG retrieval — same corpus, same queries, same measurement, across pgvector, Qdrant, Weaviate and Pinecone.
+status: building
+featured: true
+category: AI · Developer tool
+problem: Vector store benchmarks come from vendors, use different corpora, and rarely report recall — so no two numbers can be compared.
+solution: One workload definition, run against every engine with shared timing and scoring code. The engine is the only variable.
+startedAt: "2026-06"
+draft: true
+technologies:
+  - Next.js
+  - TypeScript
+  - Postgres
+  - pgvector
+  - Qdrant
+githubUrl: https://github.com/techenzo/retrieval-bench
+features:
+  - title: One workload, four engines
+    body: Define the corpus and the query set once. The harness handles indexing, warm-up and teardown per engine.
+  - title: Percentiles, not averages
+    body: Reports p50, p95 and p99 across n runs, because the mean hides the requests users actually notice.
+  - title: Recall alongside latency
+    body: A fast index that returns the wrong neighbours is not fast. Both numbers are reported together or not at all.
+  - title: Reproducible by default
+    body: Every run writes a manifest with versions, parameters and seeds, so a result can be re-run months later.
+stack:
+  - layer: Frontend
+    items: [Next.js, TypeScript, Tailwind]
+  - layer: Data
+    items: [Postgres, pgvector, Qdrant]
+  - layer: Harness
+    items: [Node, Vitest, tsx]
+changelog:
+  - date: "2026-08-30"
+    text: Recall@k reporting added alongside latency percentiles.
+  - date: "2026-08-12"
+    text: Qdrant adapter landed; pgvector and Qdrant now run from one config.
+  - date: "2026-07-04"
+    text: First working harness — pgvector only, latency only.
+---
+
+<Callout label="Draft">
+This product page is a working example of the template while Retrieval Bench is
+still being built. It is marked `draft: true`, so it renders on localhost and is
+excluded from the production build, the sitemap and the RSS feed.
+</Callout>
+
+## Problem
+
+Choosing a vector store is mostly done on vibes. The published benchmarks come
+from the vendors, use different corpora, report different percentiles, and
+rarely mention recall at all — so two numbers from two sources cannot be
+compared, and a team ends up picking on brand recognition.
+
+The question a team actually has is narrow: *for our corpus and our query
+shape, which engine answers fast enough at acceptable recall, and what does it
+cost to keep the index warm?*
+
+## Solution
+
+Retrieval Bench runs one workload definition against every engine it supports.
+Same documents, same embeddings, same queries, same measurement code — the only
+variable is the engine.
+
+<Features />
+
+## How it works
+
+The harness treats each engine as an adapter with four methods: `index`,
+`warm`, `search` and `teardown`. Everything else — timing, percentile maths,
+recall scoring against a brute-force ground truth, and manifest writing — is
+shared, so no engine can be measured more favourably than another by accident.
+
+```ts title="adapters/types.ts"
+export interface Adapter {
+  index(docs: Document[]): Promise<void>;
+  warm(queries: Query[]): Promise<void>;
+  search(query: Query, k: number): Promise<string[]>;
+  teardown(): Promise<void>;
+}
+```
+
+Ground truth comes from an exact nearest-neighbour scan over the same corpus, so
+recall is measured against what the answer actually was rather than against
+another approximate index.
+
+## Status
+
+Two adapters work end to end. Weaviate and Pinecone are next, and the report
+output is still a JSON dump rather than something you would hand to anyone.
+
+There are no published numbers yet — the first results land in the Lab as a
+proper experiment, with conditions stated, once the third adapter is in and the
+measurement has been repeated enough times to be worth trusting.

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Guards the JSON-LD escape. It once regressed to a no-op that compiled,
+      # type-checked and rendered fine — see scripts/check-jsonld-escape.mjs.
+      - name: JSON-LD escape guard
+        run: npm run check:jsonld
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # The content loaders validate every MDX file with zod, so a malformed
+      # frontmatter date or a missing "## Limitations" section fails here rather
+      # than reaching a reader.
+      - name: Build
+        run: npm run build
+
+      # Secrets must never reach the client bundle. None of our env vars are
+      # NEXT_PUBLIC_*, so any provider key prefix appearing in built JS is a bug.
+      - name: No secrets in client bundle
+        run: |
+          if grep -rEl "re_[A-Za-z0-9]{16,}" .next/static 2>/dev/null; then
+            echo "::error::A Resend-style API key appears in the client bundle."
+            exit 1
+          fi
+          echo "Clean: no provider key prefixes in .next/static"

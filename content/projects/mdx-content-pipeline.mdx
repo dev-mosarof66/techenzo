@@ -1,0 +1,54 @@
+---
+title: Content pipeline
+description: The MDX loader behind this site — frontmatter validated with zod, build-time syntax highlighting, and drafts that cannot reach production.
+category: developer-tool
+createdAt: "2026-09-04"
+technologies:
+  - Next.js
+  - TypeScript
+  - MDX
+  - Shiki
+  - Zod
+stack:
+  - layer: Rendering
+    items: [Next.js App Router, next-mdx-remote]
+  - layer: Content
+    items: [MDX, gray-matter, Zod]
+  - layer: Highlighting
+    items: [Shiki, custom theme]
+githubUrl: https://github.com/techenzo/techenzo.com
+draft: true
+---
+
+<Callout label="Draft">
+A seed file demonstrating the project format. Marked `draft: true`, so it renders
+on localhost and is excluded from the production build and the sitemap.
+</Callout>
+
+Three content types — experiments, products and writing — share one loader
+shape: read a directory, parse frontmatter, validate it, sort, return typed
+objects. Pages consume arrays and never touch the filesystem, which is what
+makes swapping the source for a database later a change in one file.
+
+## What it enforces
+
+Validation is the interesting part. Frontmatter is parsed with Zod rather than
+cast, so a malformed date or a missing field fails the build with the filename
+attached — the only moment anyone is going to fix it.
+
+Four rules ended up worth encoding:
+
+- An experiment without a `## Limitations` section will not build.
+- A product marked `launched` with no URL will not build.
+- A project with neither a repo nor a demo will not build.
+- More than one featured product will not build.
+
+Each of those is a rule the design spec states in prose. Written down in a
+document, they get forgotten; written into a loader, they cannot be.
+
+## Drafts
+
+Every loader filters `draft: true` in production, and the sitemap and feed are
+computed from the same filtered list, so there is no path by which a working
+note reaches a reader. Setting `TECHENZO_INCLUDE_DRAFTS=1` renders drafts for a
+preview deploy but still keeps them out of the feed.
