@@ -35,13 +35,42 @@ export const site = {
      */
     timeline: [] as { year: string; text: string }[],
   },
+  /**
+   * A profile that does not exist yet stays `undefined` — never a bare
+   * `https://x.com/`. Two reasons, and the second is the expensive one: to a
+   * reader it is a dead link to a platform's front door, and in the `sameAs`
+   * array of our Organization and Person schema it is a false identity claim.
+   * `sameAs` is how a search engine ties this domain to a real entity; pointing
+   * it at a homepage nobody controls spends that signal on nothing. Fill a
+   * handle in and every link list and schema block picks it up automatically —
+   * see `socialProfiles` below.
+   */
   social: {
-    github: "https://github.com/",
-    x: "https://x.com/",
-    linkedin: "https://linkedin.com/in/",
+    github: "https://github.com/dev-mosarof66" as string | undefined,
+    x: undefined as string | undefined,
+    linkedin: undefined as string | undefined,
     email: "hello@techenzo.com",
   },
 } as const;
+
+export type SocialProfile = { label: "GitHub" | "X" | "LinkedIn"; href: string };
+
+/**
+ * The social profiles that actually exist, in display order.
+ *
+ * Every link list and every `sameAs` array reads from this one filtered list,
+ * so adding a handle to `site.social` makes it appear everywhere at once and
+ * leaving one undefined removes it everywhere at once. The alternative —
+ * each surface deciding for itself — is how a placeholder survives in the
+ * footer long after it was fixed in the header.
+ */
+export const socialProfiles: SocialProfile[] = (
+  [
+    { label: "GitHub", href: site.social.github },
+    { label: "X", href: site.social.x },
+    { label: "LinkedIn", href: site.social.linkedin },
+  ] satisfies { label: SocialProfile["label"]; href: string | undefined }[]
+).filter((profile): profile is SocialProfile => Boolean(profile.href));
 
 /** Nav order is the site's information hierarchy — products first, about last. */
 export const nav = [
@@ -73,10 +102,8 @@ export const footerColumns = [
   {
     heading: "Connect",
     links: [
-      { label: "GitHub", href: site.social.github, external: true },
-      { label: "X", href: site.social.x, external: true },
-      { label: "LinkedIn", href: site.social.linkedin, external: true },
+      ...socialProfiles.map((profile) => ({ ...profile, external: true })),
       { label: "Email", href: `mailto:${site.social.email}`, external: true },
     ],
   },
-] as const;
+];

@@ -4,6 +4,8 @@
  * inherit the theme like every other icon (spec §5.4).
  */
 
+import type { ComponentType } from "react";
+
 type IconProps = { size?: number; className?: string };
 
 export function GitHubIcon({ size = 20, className }: IconProps) {
@@ -35,3 +37,19 @@ export function XIcon({ size = 18, className }: IconProps) {
     </svg>
   );
 }
+
+/**
+ * Label → brand mark, for the link lists built from `socialProfiles`.
+ *
+ * LinkedIn has no mark here on purpose: rendering a wrong or improvised logo
+ * is worse than rendering none, and the label alone is unambiguous. Consumers
+ * already handle a null icon.
+ */
+export const SOCIAL_ICONS: Record<
+  "GitHub" | "X" | "LinkedIn",
+  ComponentType<IconProps> | null
+> = {
+  GitHub: GitHubIcon,
+  X: XIcon,
+  LinkedIn: null,
+};

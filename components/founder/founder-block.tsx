@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
-import { site } from "@/config/site";
-import { GitHubIcon, XIcon } from "@/components/ui/icons";
+import { site, socialProfiles } from "@/config/site";
+import { SOCIAL_ICONS } from "@/components/ui/icons";
 import { Portrait } from "./portrait";
 
 /**
@@ -12,12 +12,6 @@ import { Portrait } from "./portrait";
  * than leading with the name — it leaves room for Techenzo to grow past one
  * person without the site needing a rebuild.
  */
-const LINKS = [
-  { label: "GitHub", href: site.social.github, Icon: GitHubIcon },
-  { label: "X", href: site.social.x, Icon: XIcon },
-  { label: "LinkedIn", href: site.social.linkedin, Icon: null },
-] as const;
-
 export function FounderBlock() {
   return (
     <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-12">
@@ -34,7 +28,9 @@ export function FounderBlock() {
         <p className="t-body-lg measure-copy mt-6 text-ink-2">{site.founder.bio}</p>
 
         <ul className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
-          {LINKS.map(({ label, href, Icon }) => (
+          {socialProfiles.map(({ label, href }) => {
+            const Icon = SOCIAL_ICONS[label];
+            return (
             <li key={label}>
               <a
                 href={href}
@@ -47,7 +43,8 @@ export function FounderBlock() {
                 <ArrowUpRight size={14} strokeWidth={1.5} aria-hidden="true" />
               </a>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </div>
     </div>

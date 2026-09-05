@@ -8,19 +8,13 @@ import { ButtonLink } from "@/components/ui/button";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { Portrait } from "@/components/founder/portrait";
 import { Timeline } from "@/components/founder/timeline";
-import { GitHubIcon, XIcon } from "@/components/ui/icons";
+import { SOCIAL_ICONS } from "@/components/ui/icons";
 import { JsonLd } from "@/components/seo/json-ld";
 import { pageMetadata, personJsonLd } from "@/lib/seo";
 import { positioning, principles, stack, whatWeDo } from "@/config/about";
-import { site } from "@/config/site";
+import { site, socialProfiles } from "@/config/site";
 
 export const metadata: Metadata = pageMetadata("/about");
-
-const LINKS = [
-  { label: "GitHub", href: site.social.github, Icon: GitHubIcon },
-  { label: "X", href: site.social.x, Icon: XIcon },
-  { label: "LinkedIn", href: site.social.linkedin, Icon: null },
-] as const;
 
 /**
  * Spec §9.8. The hierarchy is the whole point of this page: Techenzo is the
@@ -109,20 +103,23 @@ export default function AboutPage() {
             <Timeline />
 
             <ul className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
-              {LINKS.map(({ label, href, Icon }) => (
-                <li key={label}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-draw t-body-sm inline-flex items-center gap-2 text-accent hover:text-accent-hover"
-                  >
-                    {Icon ? <Icon size={16} /> : null}
-                    {label}
-                    <ArrowUpRight size={14} strokeWidth={1.5} aria-hidden="true" />
-                  </a>
-                </li>
-              ))}
+              {socialProfiles.map(({ label, href }) => {
+                const Icon = SOCIAL_ICONS[label];
+                return (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link-draw t-body-sm inline-flex items-center gap-2 text-accent hover:text-accent-hover"
+                    >
+                      {Icon ? <Icon size={16} /> : null}
+                      {label}
+                      <ArrowUpRight size={14} strokeWidth={1.5} aria-hidden="true" />
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

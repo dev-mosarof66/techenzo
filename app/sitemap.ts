@@ -30,6 +30,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         (route.path === "/lab" && experiments.length > 0) ||
         (route.path === "/products" && products.length > 0) ||
         (route.path === "/writing" && posts.length > 0) ||
+        (route.path === "/changelog" &&
+          products.some((product) => product.changelog.length > 0)) ||
         (route.path === "/projects" && projects.length > 0),
     )
     .map((route) => ({

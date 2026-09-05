@@ -60,6 +60,24 @@ export const metadata: Metadata = {
     types: { "application/rss+xml": [{ url: "/rss.xml", title: `${site.name} — all posts` }] },
   },
   formatDetection: { telephone: false, address: false, email: false },
+  /**
+   * Search Console / Bing Webmaster ownership tokens.
+   *
+   * These come from the environment rather than a checked-in constant because
+   * they are per-property: a preview deployment or a fork that shipped the
+   * production token would be claiming a domain it does not own. When the var
+   * is unset the key resolves to undefined and Next omits the tag entirely,
+   * which is the correct state for every environment except production.
+   *
+   * The DNS TXT verification method needs none of this — prefer it if you have
+   * registrar access, because it survives a redeploy that drops the env var.
+   */
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : {},
+  },
   robots: {
     index: true,
     follow: true,

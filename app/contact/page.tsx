@@ -3,7 +3,7 @@ import { Container } from "@/components/layout/container";
 import { PageHero } from "@/components/layout/page-hero";
 import { ContactForm } from "@/components/forms/contact-form";
 import { pageMetadata } from "@/lib/seo";
-import { site } from "@/config/site";
+import { site, socialProfiles } from "@/config/site";
 
 export const metadata: Metadata = pageMetadata("/contact");
 
@@ -54,15 +54,11 @@ export default function ContactPage() {
             <div className="mt-10 border-t border-line pt-6">
               <p className="t-kicker mb-3 text-ink-3">Elsewhere</p>
               <ul className="t-mono-sm flex flex-col gap-2.5 text-ink-3">
-                <li>
-                  <a href={site.social.github} target="_blank" rel="noopener noreferrer" className="link-draw hover:text-ink">GitHub</a>
-                </li>
-                <li>
-                  <a href={site.social.x} target="_blank" rel="noopener noreferrer" className="link-draw hover:text-ink">X</a>
-                </li>
-                <li>
-                  <a href={site.social.linkedin} target="_blank" rel="noopener noreferrer" className="link-draw hover:text-ink">LinkedIn</a>
-                </li>
+                {socialProfiles.map(({ label, href }) => (
+                  <li key={label}>
+                    <a href={href} target="_blank" rel="noopener noreferrer" className="link-draw hover:text-ink">{label}</a>
+                  </li>
+                ))}
               </ul>
             </div>
           </aside>

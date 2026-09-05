@@ -65,24 +65,28 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a
-              href={site.social.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Techenzo on GitHub"
-              className="hidden size-8 place-items-center rounded-sm text-ink-3 transition-colors duration-[var(--dur-fast)] hover:text-ink sm:grid"
-            >
-              <GitHubIcon size={18} />
-            </a>
-            <a
-              href={site.social.x}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Techenzo on X"
-              className="hidden size-8 place-items-center rounded-sm text-ink-3 transition-colors duration-[var(--dur-fast)] hover:text-ink sm:grid"
-            >
-              <XIcon size={16} />
-            </a>
+            {site.social.github ? (
+              <a
+                href={site.social.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Techenzo on GitHub"
+                className="hidden size-8 place-items-center rounded-sm text-ink-3 transition-colors duration-[var(--dur-fast)] hover:text-ink sm:grid"
+              >
+                <GitHubIcon size={18} />
+              </a>
+            ) : null}
+            {site.social.x ? (
+              <a
+                href={site.social.x}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Techenzo on X"
+                className="hidden size-8 place-items-center rounded-sm text-ink-3 transition-colors duration-[var(--dur-fast)] hover:text-ink sm:grid"
+              >
+                <XIcon size={16} />
+              </a>
+            ) : null}
             <span aria-hidden="true" className="hidden h-4 w-px bg-line sm:block" />
             <ThemeToggle />
             <button

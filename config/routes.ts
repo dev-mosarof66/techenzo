@@ -64,6 +64,16 @@ export const routes: RouteMeta[] = [
     priority: 0.8,
   },
   {
+    path: "/changelog",
+    title: "Changelog",
+    description:
+      "Everything Techenzo has shipped, across every product, newest first.",
+    // Flips on by itself once a published product has changelog entries.
+    indexable: false,
+    changeFrequency: "weekly",
+    priority: 0.5,
+  },
+  {
     path: "/contact",
     title: "Contact",
     description:

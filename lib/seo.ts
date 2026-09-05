@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { site } from "@/config/site";
+import { site, socialProfiles } from "@/config/site";
 import { routeByPath } from "@/config/routes";
 
 export const OG_LOCALE = "en_US";
@@ -64,6 +64,18 @@ export function breadcrumbJsonLd(trail: { name: string; path: string }[]) {
   };
 }
 
+/**
+ * The `sameAs` set shared by Organization and Person.
+ *
+ * This is the link between this domain and a real, already-known entity, and
+ * it is only worth anything if every URL in it resolves to a profile we
+ * actually control — a placeholder like `https://x.com/` asserts ownership of
+ * a platform's homepage and earns nothing. `socialProfiles` has already
+ * dropped the unfilled ones; omitting the key entirely when none are set beats
+ * emitting an empty array.
+ */
+const SAME_AS = socialProfiles.map((profile) => profile.href);
+
 /** Organization — emitted once, on the homepage. */
 export function organizationJsonLd() {
   return {
@@ -77,7 +89,7 @@ export function organizationJsonLd() {
       "@type": "Person",
       name: site.founder.name,
     },
-    sameAs: [site.social.github, site.social.x, site.social.linkedin],
+    ...(SAME_AS.length > 0 ? { sameAs: SAME_AS } : {}),
   };
 }
 
@@ -100,6 +112,6 @@ export function personJsonLd() {
     url: `${site.url}/about`,
     jobTitle: site.founder.roles.join(", "),
     worksFor: { "@type": "Organization", name: site.name, url: site.url },
-    sameAs: [site.social.github, site.social.x, site.social.linkedin],
+    ...(SAME_AS.length > 0 ? { sameAs: SAME_AS } : {}),
   };
 }

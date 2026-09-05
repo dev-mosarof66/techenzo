@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
-import { nav, site } from "@/config/site";
+import { nav, socialProfiles } from "@/config/site";
 import { Wordmark } from "./wordmark";
 
 /**
@@ -99,15 +99,11 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
 
       <div className="shrink-0 border-t border-line px-[var(--page-pad)] py-6">
         <div className="t-mono-sm flex gap-5 text-ink-3">
-          <a href={site.social.github} target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-          <a href={site.social.x} target="_blank" rel="noopener noreferrer">
-            X
-          </a>
-          <a href={site.social.linkedin} target="_blank" rel="noopener noreferrer">
-            LinkedIn
-          </a>
+          {socialProfiles.map(({ label, href }) => (
+            <a key={label} href={href} target="_blank" rel="noopener noreferrer">
+              {label}
+            </a>
+          ))}
         </div>
       </div>
     </div>
