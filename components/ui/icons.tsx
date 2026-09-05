@@ -38,6 +38,47 @@ export function XIcon({ size = 18, className }: IconProps) {
   );
 }
 
+export function YouTubeIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z" />
+    </svg>
+  );
+}
+
+/**
+ * Instagram is the one mark here drawn from primitives rather than a single
+ * path — the glyph *is* a rounded square, a circle and a dot, so this is the
+ * real geometry at the real proportions, not an improvisation. It reads
+ * lighter than the filled marks beside it because the official mark is a
+ * stroked design; matching their weight would mean drawing a different logo.
+ */
+export function InstagramIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+      className={className}
+    >
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 /**
  * Label → brand mark, for the link lists built from `socialProfiles`.
  *
@@ -46,10 +87,12 @@ export function XIcon({ size = 18, className }: IconProps) {
  * already handle a null icon.
  */
 export const SOCIAL_ICONS: Record<
-  "GitHub" | "X" | "LinkedIn",
+  "GitHub" | "YouTube" | "Instagram" | "X" | "LinkedIn",
   ComponentType<IconProps> | null
 > = {
   GitHub: GitHubIcon,
+  YouTube: YouTubeIcon,
+  Instagram: InstagramIcon,
   X: XIcon,
   LinkedIn: null,
 };

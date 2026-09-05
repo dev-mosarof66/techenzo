@@ -90,11 +90,16 @@ export const site = {
     github: "https://github.com/dev-mosarof66" as string | undefined,
     x: undefined as string | undefined,
     linkedin: undefined as string | undefined,
+    youtube: undefined as string | undefined,
+    instagram: undefined as string | undefined,
     email: "hello@techenzo.com",
   },
 } as const;
 
-export type SocialProfile = { label: "GitHub" | "X" | "LinkedIn"; href: string };
+export type SocialProfile = {
+  label: "GitHub" | "YouTube" | "Instagram" | "X" | "LinkedIn";
+  href: string;
+};
 
 /**
  * The social profiles that actually exist, in display order.
@@ -108,6 +113,8 @@ export type SocialProfile = { label: "GitHub" | "X" | "LinkedIn"; href: string }
 export const socialProfiles: SocialProfile[] = (
   [
     { label: "GitHub", href: site.social.github },
+    { label: "YouTube", href: site.social.youtube },
+    { label: "Instagram", href: site.social.instagram },
     { label: "X", href: site.social.x },
     { label: "LinkedIn", href: site.social.linkedin },
   ] satisfies { label: SocialProfile["label"]; href: string | undefined }[]
