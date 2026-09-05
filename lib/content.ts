@@ -57,6 +57,29 @@ const chartSchema = z
     { message: "every series must have one value per category" },
   );
 
+/**
+ * A results table. Separate from `charts` because a table is the right form
+ * when there are more columns than a chart can carry legibly, or when the
+ * numbers are the point and the shape is not.
+ *
+ * `betterIs` drives which cell in each row is emphasised. Omit it and nothing
+ * is highlighted — better to show no winner than to assert the wrong one.
+ */
+const tableSchema = z
+  .object({
+    id: z.string().min(1),
+    title: z.string().min(1),
+    columns: z.array(z.string().min(1)).min(2),
+    rows: z
+      .array(z.object({ label: z.string().min(1), values: z.array(z.string()) }))
+      .min(1),
+    unit: z.string().optional(),
+    betterIs: z.enum(["lower", "higher"]).optional(),
+  })
+  .refine((t) => t.rows.every((r) => r.values.length === t.columns.length - 1), {
+    message: "each row needs one value per column after the first (the label column)",
+  });
+
 const experimentSchema = z.object({
   id: z
     .string()
@@ -71,6 +94,7 @@ const experimentSchema = z.object({
   githubUrl: z.string().optional(),
   results: z.array(resultSchema).default([]),
   charts: z.array(chartSchema).default([]),
+  tables: z.array(tableSchema).default([]),
   draft: z.boolean().default(false),
 });
 

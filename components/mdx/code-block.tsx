@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import { Check, Copy } from "lucide-react";
+import { Toast } from "@/components/ui/toast";
 
 /**
  * Wraps Shiki's rendered <pre>. Highlighting happens at build time — this
@@ -55,6 +56,7 @@ export function CodeBlock({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   // A fence with neither a filename nor a language gets no strip — a header
   // bar with nothing in it is chrome for its own sake.
@@ -65,7 +67,10 @@ export function CodeBlock({
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      return; // Clipboard blocked — say nothing rather than flash a false success.
+      // Previously this returned silently, so a blocked clipboard looked
+      // identical to a button that simply did not work.
+      setFailed(true);
+      return;
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
@@ -92,6 +97,13 @@ export function CodeBlock({
       <span aria-live="polite" className="sr-only">
         {copied ? "Copied to clipboard" : ""}
       </span>
+
+      {failed ? (
+        <Toast
+          message="Your browser blocked the clipboard. Select the code and copy it manually."
+          onDismiss={() => setFailed(false)}
+        />
+      ) : null}
     </div>
   );
 }

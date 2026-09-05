@@ -36,6 +36,18 @@ charts:
         values: [18, 29, 42]
       - name: Qdrant
         values: [14, 21, 31]
+tables:
+  - id: engine-comparison
+    title: Full results by engine
+    betterIs: lower
+    columns: [Metric, pgvector, Qdrant, Weaviate]
+    rows:
+      - label: p95 latency (ms)
+        values: ["42", "31", "38"]
+      - label: p99 latency (ms)
+        values: ["61", "44", "57"]
+      - label: index build (s)
+        values: ["252", "348", "301"]
 ---
 
 <Callout label="Read this first">
@@ -114,6 +126,13 @@ attached. Conditions are not a prop either: they come from `conditions`, so a
 figure cannot be published without its method.
 
 <Chart id="latency-by-size" />
+
+`<Results id="…" />` renders a table from the `tables` frontmatter — the right
+form when there are more columns than a chart carries legibly. The best value
+per row is emphasised in weight rather than colour, and only when `betterIs`
+says which direction wins; guessing would be worse than marking nothing.
+
+<Results id="engine-comparison" />
 
 The chart refuses to render past six series, refuses a series whose value count
 does not match the categories, and always ships the same numbers as a table.

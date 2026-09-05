@@ -4,11 +4,14 @@ import { Section } from "@/components/layout/section";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FilterRow, type FilterOption } from "@/components/ui/filter-row";
+import { Pagination, paginate, resolvePage } from "@/components/ui/pagination";
 import { ExperimentRow } from "@/components/lab/experiment-row";
 import { getExperiments } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 
-type Props = { searchParams: Promise<{ tag?: string | string[] }> };
+type Props = {
+  searchParams: Promise<{ tag?: string | string[]; page?: string | string[] }>;
+};
 
 /** A tag arriving from the URL is untrusted input — match it, never trust it. */
 function resolveTag(raw: string | string[] | undefined, tags: string[]) {
@@ -69,6 +72,9 @@ export default async function LabPage({ searchParams }: Props) {
     ? experiments.filter((e) => e.tags.includes(activeTag))
     : experiments;
 
+  const params = await searchParams;
+  const page = paginate(visible, resolvePage(params.page));
+
   const options: FilterOption[] = [
     {
       label: "All",
@@ -108,7 +114,7 @@ export default async function LabPage({ searchParams }: Props) {
             {visible.length > 0 ? (
               <>
                 <div className="border-t border-line">
-                  {visible.map((experiment) => (
+                  {page.items.map((experiment) => (
                     <ExperimentRow key={experiment.slug} experiment={experiment} />
                   ))}
                 </div>
@@ -120,6 +126,16 @@ export default async function LabPage({ searchParams }: Props) {
                     </a>
                   </p>
                 ) : null}
+                <Pagination
+                  {...page}
+                  label="Pagination"
+                  hrefFor={(n: number) =>
+                    `/lab?${new URLSearchParams({
+                      ...(activeTag ? { tag: activeTag } : {}),
+                      ...(n > 1 ? { page: String(n) } : {}),
+                    })}`.replace(/\?$/, "")
+                  }
+                />
               </>
             ) : activeTag ? (
               <EmptyState

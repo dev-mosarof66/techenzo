@@ -49,6 +49,13 @@ const productSchema = z.object({
     .array(z.object({ title: z.string().min(1), body: z.string().min(1) }))
     .max(6, "Six real features beat twelve padded ones — spec §9.3")
     .default([]),
+  /** Drives the "How it works" diagram and numbered steps (spec §9.3). */
+  architecture: z
+    .object({
+      flow: z.array(z.string().min(1)).max(6, "A flow past six boxes stops being readable").optional(),
+      steps: z.array(z.string().min(1)).max(5, "Three to five steps — spec §9.3").optional(),
+    })
+    .optional(),
   metrics: z.array(metricSchema).default([]),
   changelog: z
     .array(

@@ -5,7 +5,8 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { MdxContent } from "@/components/mdx/mdx-content";
 import { MetricBlock } from "@/components/ui/metric-block";
-import { BarChart, type BarChartProps } from "@/components/charts/bar-chart";
+import { BarChart } from "@/components/charts/bar-chart";
+import { ResultTable } from "@/components/charts/result-table";
 import { TableOfContents } from "@/components/lab/table-of-contents";
 import { ReadingProgress } from "@/components/lab/reading-progress";
 import { ExperimentNav } from "@/components/lab/experiment-nav";
@@ -145,6 +146,15 @@ export default async function ExperimentPage({ params }: Params) {
                   Metrics: () => <MetricBlock results={experiment.results} />,
                   // Conditions come from frontmatter, not from the author's
                   // memory — a figure cannot be published without its method.
+                  Results: ({ id }: { id: string }) => {
+                    const table = experiment.tables.find((t) => t.id === id);
+                    if (!table) {
+                      throw new Error(
+                        `<Results id="${id}" /> has no matching entry in this experiment's tables[] frontmatter.`,
+                      );
+                    }
+                    return <ResultTable {...table} conditions={experiment.conditions} />;
+                  },
                   Chart: ({ id }: { id: string }) => {
                     const chart = experiment.charts.find((c) => c.id === id);
                     if (!chart) {

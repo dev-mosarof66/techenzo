@@ -4,6 +4,7 @@ import { Section } from "@/components/layout/section";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FilterRow, type FilterOption } from "@/components/ui/filter-row";
+import { Pagination, paginate, resolvePage } from "@/components/ui/pagination";
 import { ArticleCard } from "@/components/writing/article-card";
 import {
   CONTENT_TYPES,
@@ -13,7 +14,9 @@ import {
 } from "@/lib/writing";
 import { pageMetadata } from "@/lib/seo";
 
-type Props = { searchParams: Promise<{ type?: string | string[] }> };
+type Props = {
+  searchParams: Promise<{ type?: string | string[]; page?: string | string[] }>;
+};
 
 function resolveType(raw: string | string[] | undefined): ContentType | null {
   const candidate = Array.isArray(raw) ? raw[0] : raw;
@@ -50,6 +53,9 @@ export default async function WritingPage({ searchParams }: Props) {
   // Only offer types that exist — a filter with nothing behind it is a dead end.
   const present = CONTENT_TYPES.filter((type) => posts.some((post) => post.type === type));
 
+  const params = await searchParams;
+  const page = paginate(visible, resolvePage(params.page));
+
   const options: FilterOption[] = [
     { label: "All", href: "/writing", active: activeType === null, count: posts.length },
     ...present.map((type) => ({
@@ -81,16 +87,28 @@ export default async function WritingPage({ searchParams }: Props) {
             <FilterRow options={options} label="Filter writing by type" />
 
             {visible.length > 0 ? (
-              <div className="border-t border-line">
-                {visible.map((post, index) => (
-                  <ArticleCard
-                    key={post.slug}
-                    post={post}
-                    featured={index === 0 && !activeType}
-                  />
-                ))}
-              </div>
-            ) : activeType ? (
+            <>
+                <div className="border-t border-line">
+                  {page.items.map((post, index) => (
+                    <ArticleCard
+                      key={post.slug}
+                      post={post}
+                      featured={index === 0 && !activeType}
+                    />
+                  ))}
+                </div>
+    
+            <Pagination
+              {...page}
+              label="Pagination"
+              hrefFor={(n: number) =>
+                  `/writing?${new URLSearchParams({
+                    ...(activeType ? { type: activeType } : {}),
+                    ...(n > 1 ? { page: String(n) } : {}),
+                  })}`.replace(/\?$/, "")}
+            />
+            </>
+        ) : activeType ? (
               <EmptyState
                 title={`No ${TYPE_PLURAL[activeType].toLowerCase()} yet.`}
                 body="Everything else is listed under All."

@@ -10,6 +10,7 @@ import { StatusChip } from "@/components/ui/status-chip";
 import { ButtonLink } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbJsonLd, FEED_ALTERNATE, OG_LOCALE } from "@/lib/seo";
+import { Architecture } from "@/components/products/architecture";
 import {
   ChangelogList,
   FeatureGrid,
@@ -154,6 +155,7 @@ export default async function ProductPage({ params }: Params) {
               // cards and the index read.
               Metrics: () => <MetricBlock results={product.metrics} />,
               Features: () => <FeatureGrid features={product.features} />,
+              Architecture: () => <Architecture {...(product.architecture ?? {})} />,
             }}
           />
 

@@ -4,11 +4,14 @@ import { Section } from "@/components/layout/section";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FilterRow, type FilterOption } from "@/components/ui/filter-row";
+import { Pagination, paginate, resolvePage } from "@/components/ui/pagination";
 import { ProductCard } from "@/components/products/product-card";
 import { getProducts, PRODUCT_STATUSES, type ProductStatus } from "@/lib/products";
 import { pageMetadata } from "@/lib/seo";
 
-type Props = { searchParams: Promise<{ status?: string | string[] }> };
+type Props = {
+  searchParams: Promise<{ status?: string | string[]; page?: string | string[] }>;
+};
 
 const STATUS_LABEL: Record<ProductStatus, string> = {
   launched: "Live",
@@ -67,6 +70,9 @@ export default async function ProductsPage({ searchParams }: Props) {
     products.some((product) => product.status === status),
   );
 
+  const params = await searchParams;
+  const page = paginate(visible, resolvePage(params.page));
+
   const options: FilterOption[] = [
     {
       label: "All",
@@ -101,11 +107,34 @@ export default async function ProductsPage({ searchParams }: Props) {
         <FilterRow options={options} label="Filter products by status" />
 
         {visible.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {visible.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
+        <>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {page.items.map((product) => (
+                // The featured product takes a wider cell, but only in the
+                // unfiltered first page — inside a filter it is just a result.
+                <div
+                  key={product.slug}
+                  className={
+                    product.featured && !activeStatus && page.current === 1
+                      ? "lg:col-span-2"
+                      : undefined
+                  }
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+
+            <Pagination
+              {...page}
+              label="Pagination"
+              hrefFor={(n: number) =>
+                  `/products?${new URLSearchParams({
+                    ...(activeStatus ? { status: activeStatus } : {}),
+                    ...(n > 1 ? { page: String(n) } : {}),
+                  })}`.replace(/\?$/, "")}
+            />
+        </>
         ) : activeStatus ? (
           <EmptyState
             title={`Nothing at the ${STATUS_LABEL[activeStatus].toLowerCase()} stage.`}

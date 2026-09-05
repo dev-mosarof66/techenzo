@@ -678,8 +678,10 @@ Fields: Name, Email, Subject (select: *Work together · Product question · Some
 
 ### 8.18 Pagination / LoadMore
 
-- Lab, Writing and Projects indexes show 12 items, then a `secondary md` "Load more" button (server action, appends, focus moves to the first new item).
-- No infinite scroll — it breaks the footer and the back button.
+- All four indexes show 12 items per page, then **URL-backed pagination** (`?page=2`), preserving any active filter.
+- **Built as URL pages, not a "Load more" button.** Append-in-place gives up three things this spec argues for elsewhere: a shared link no longer shows what the sharer saw, the back button stops behaving, and it needs client JavaScript. Page links need none.
+- No infinite scroll — it breaks the footer and the back button, which is what this rule was guarding against.
+- Page numbers arriving from the URL are parsed, floored at 1 and clamped to the last page. `?page=abc`, `?page=-3` and `?page=99` all resolve to a real page rather than an empty one.
 
 ### 8.19 EmptyState
 
@@ -692,6 +694,7 @@ Used when a collection has no items yet (very likely at launch — design for it
 ### 8.20 Toast
 
 - Bottom-right ≥768, bottom-full-width <768. 1px `--border`, `--bg-raised`, the one permitted shadow.
+- **Rendered locally by whatever raises it — deliberately not a global provider.** A context in the root layout would ship this component's JavaScript on every page, including the many that never raise a toast. Its current and only use is a blocked clipboard in `CodeBlock`, which previously failed silently.
 - Auto-dismiss 5s, pause on hover/focus, manual close always available.
 - `role="status"` for success, `role="alert"` for errors.
 

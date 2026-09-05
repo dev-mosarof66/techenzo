@@ -25,6 +25,13 @@ features:
     body: A fast index that returns the wrong neighbours is not fast. Both numbers are reported together or not at all.
   - title: Reproducible by default
     body: Every run writes a manifest with versions, parameters and seeds, so a result can be re-run months later.
+architecture:
+  flow: [Corpus, Embeddings, Adapter, Engine, Report]
+  steps:
+    - Each engine is an adapter with four methods - index, warm, search, teardown.
+    - Timing, percentile maths and recall scoring live in shared code, so no engine can be measured more favourably by accident.
+    - Ground truth comes from an exact nearest-neighbour scan over the same corpus.
+    - Every run writes a manifest with versions, parameters and seeds so it can be re-run months later.
 stack:
   - layer: Frontend
     items: [Next.js, TypeScript, Tailwind]
@@ -67,6 +74,8 @@ variable is the engine.
 <Features />
 
 ## How it works
+
+<Architecture />
 
 The harness treats each engine as an adapter with four methods: `index`,
 `warm`, `search` and `teardown`. Everything else — timing, percentile maths,
