@@ -11,17 +11,30 @@
  *     Deliberately not `VERCEL_URL`, which is unique per deployment: canonicals
  *     built from it would point at a build-specific host that is superseded on
  *     the next push, so every page would name a different "real" URL each time.
- *  3. localhost, for `next dev` with no environment at all.
+ *  3. The canonical production domain — the correct answer for this site, and
+ *     the reason a production build can never emit localhost.
+ *  4. localhost, in development only.
  *
- * All three are read at build time on the server. No client component reads
+ * The localhost fallback used to be unconditional. That meant a production
+ * build with no environment set would silently publish a sitemap and a full set
+ * of canonicals pointing at http://localhost:3000 — every page telling crawlers
+ * its real address was a host only the build machine can reach, with no error
+ * to notice. Production now falls through to the real domain instead, and
+ * localhost is unreachable outside `next dev`.
+ *
+ * All of these are read at build time on the server. No client component reads
  * `site.url`, so nothing here reaches the browser bundle.
  */
+const CANONICAL_ORIGIN = "https://techenzo.com";
+
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/$/, "");
 
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
   if (vercel) return `https://${vercel}`;
+
+  if (process.env.NODE_ENV === "production") return CANONICAL_ORIGIN;
 
   return "http://localhost:3000";
 }

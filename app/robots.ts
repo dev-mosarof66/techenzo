@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         // API routes have nothing to index and the OG endpoints are referenced
         // by tag, not by crawl.
-        disallow: ["/api/"],
+        disallow: ["/api/", "/keystatic"],
       },
     ],
     sitemap: `${site.url}/sitemap.xml`,

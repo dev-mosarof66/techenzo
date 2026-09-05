@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import { site } from "@/config/site";
-import { Navbar } from "@/components/navigation/navbar";
-import { Footer } from "@/components/navigation/footer";
 import { ThemeScript } from "@/components/theme/theme-script";
 import "./globals.css";
 
@@ -111,14 +109,7 @@ export default async function RootLayout({
       <head>
         <ThemeScript nonce={nonce} />
       </head>
-      <body>
-        <a href="#content" className="skip-link">
-          Skip to content
-        </a>
-        <Navbar />
-        <main id="content">{children}</main>
-        <Footer />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/layout/container";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { AttemptedPath } from "@/components/navigation/attempted-path";
 
 /**
@@ -22,7 +23,8 @@ const DESTINATIONS = [
 
 export default function NotFound() {
   return (
-    <div className="grid-field py-20 lg:py-28">
+    <SiteChrome>
+      <div className="grid-field py-20 lg:py-28">
       <Container>
         <p className="t-kicker text-accent">404</p>
         <h1 className="t-display-2 mt-5 max-w-[18ch]">No route here.</h1>
@@ -51,7 +53,8 @@ export default function NotFound() {
             </li>
           ))}
         </ul>
-      </Container>
-    </div>
+        </Container>
+      </div>
+    </SiteChrome>
   );
 }

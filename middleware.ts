@@ -43,10 +43,24 @@ function buildCsp(nonce: string, isDev: boolean): string {
   return directives.join("; ");
 }
 
+/**
+ * The Keystatic admin loads a webfont from Google. Rather than open that origin
+ * to the whole public site, the allowance is scoped to the admin path only —
+ * it is authenticated, private, and serves no untrusted content.
+ */
+function isAdmin(pathname: string) {
+  return pathname.startsWith("/keystatic") || pathname.startsWith("/api/keystatic");
+}
+
 export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV === "development";
-  const csp = buildCsp(nonce, isDev);
+  const admin = isAdmin(request.nextUrl.pathname);
+  const csp = admin
+    ? buildCsp(nonce, isDev)
+        .replace("style-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
+        .replace("font-src 'self'", "font-src 'self' https://fonts.gstatic.com")
+    : buildCsp(nonce, isDev);
 
   // Pass the nonce forward so the layout can read it via headers().
   const requestHeaders = new Headers(request.headers);
