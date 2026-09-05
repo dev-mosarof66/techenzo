@@ -14,6 +14,8 @@ import {
   getProjectNeighbours,
   getProjects,
 } from "@/lib/projects";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbJsonLd, FEED_ALTERNATE, OG_LOCALE } from "@/lib/seo";
 import { site } from "@/config/site";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -31,10 +33,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: project.title,
     description: project.description,
-    alternates: { canonical: `/projects/${slug}` },
+    alternates: { canonical: `/projects/${slug}`, types: FEED_ALTERNATE },
     robots: project.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "website",
+      locale: OG_LOCALE,
       url: `/projects/${slug}`,
       siteName: site.name,
       title: project.title,
@@ -62,6 +65,13 @@ export default async function ProjectPage({ params }: Params) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Projects", path: "/projects" },
+          { name: project.title, path: `/projects/${slug}` },
+        ])}
+      />
       <Container width="prose" className="pt-14 lg:pt-20">
         <Link
           href="/projects"

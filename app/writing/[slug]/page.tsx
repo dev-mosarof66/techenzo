@@ -9,6 +9,7 @@ import { ReadingProgress } from "@/components/lab/reading-progress";
 import { PrevNextNav } from "@/components/ui/prev-next-nav";
 import { Byline } from "@/components/writing/byline";
 import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbJsonLd, FEED_ALTERNATE, OG_LOCALE } from "@/lib/seo";
 import { TYPE_LABEL, getPost, getPostNeighbours, getPosts } from "@/lib/writing";
 import { site } from "@/config/site";
 
@@ -27,10 +28,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: post.title,
     description: post.description,
-    alternates: { canonical: `/writing/${slug}` },
+    alternates: { canonical: `/writing/${slug}`, types: FEED_ALTERNATE },
     robots: post.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "article",
+      locale: OG_LOCALE,
       url: `/writing/${slug}`,
       siteName: site.name,
       title: post.title,
@@ -74,6 +76,13 @@ export default async function PostPage({ params }: Params) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Writing", path: "/writing" },
+          { name: post.title, path: `/writing/${slug}` },
+        ])}
+      />
       {!post.draft ? <JsonLd data={jsonLd} /> : null}
       <ReadingProgress targetId="post" />
 

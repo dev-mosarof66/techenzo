@@ -39,6 +39,7 @@ export const metadata: Metadata = {
   description: site.description,
   openGraph: {
     type: "website",
+    locale: "en_US",
     siteName: site.name,
     title: `${site.name} — ${site.tagline}`,
     description: site.description,
@@ -53,6 +54,11 @@ export const metadata: Metadata = {
   creator: site.founder.name,
   publisher: site.name,
   category: "technology",
+  // Declares the feed in <head> so readers and crawlers discover it without
+  // relying on someone finding the footer link.
+  alternates: {
+    types: { "application/rss+xml": [{ url: "/rss.xml", title: `${site.name} — all posts` }] },
+  },
   formatDetection: { telephone: false, address: false, email: false },
   robots: {
     index: true,

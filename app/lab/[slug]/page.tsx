@@ -11,6 +11,7 @@ import { ReadingProgress } from "@/components/lab/reading-progress";
 import { ExperimentNav } from "@/components/lab/experiment-nav";
 import { ButtonLink } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbJsonLd, FEED_ALTERNATE, OG_LOCALE } from "@/lib/seo";
 import {
   getExperiment,
   getExperimentNeighbours,
@@ -33,11 +34,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: experiment.title,
     description: experiment.description,
-    alternates: { canonical: `/lab/${slug}` },
+    alternates: { canonical: `/lab/${slug}`, types: FEED_ALTERNATE },
     // A draft is reachable by URL in development but must never be indexed.
     robots: experiment.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "article",
+      locale: OG_LOCALE,
       url: `/lab/${slug}`,
       siteName: site.name,
       title: experiment.title,
@@ -75,6 +77,13 @@ export default async function ExperimentPage({ params }: Params) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "The Lab", path: "/lab" },
+          { name: experiment.title, path: `/lab/${slug}` },
+        ])}
+      />
       {!experiment.draft ? <JsonLd data={articleJsonLd} /> : null}
       <ReadingProgress targetId="experiment" />
 

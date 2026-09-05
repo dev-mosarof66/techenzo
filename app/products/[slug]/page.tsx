@@ -9,6 +9,7 @@ import { MetricBlock } from "@/components/ui/metric-block";
 import { StatusChip } from "@/components/ui/status-chip";
 import { ButtonLink } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbJsonLd, FEED_ALTERNATE, OG_LOCALE } from "@/lib/seo";
 import {
   ChangelogList,
   FeatureGrid,
@@ -32,10 +33,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: product.name,
     description: product.description,
-    alternates: { canonical: `/products/${slug}` },
+    alternates: { canonical: `/products/${slug}`, types: FEED_ALTERNATE },
     robots: product.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "website",
+      locale: OG_LOCALE,
       url: `/products/${slug}`,
       siteName: site.name,
       title: `${product.name} — ${product.tagline}`,
@@ -78,6 +80,13 @@ export default async function ProductPage({ params }: Params) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Products", path: "/products" },
+          { name: product.name, path: `/products/${slug}` },
+        ])}
+      />
       {structured && !product.draft ? <JsonLd data={structured} /> : null}
 
       <Container className="pt-14 lg:pt-20">
