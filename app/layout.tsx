@@ -30,11 +30,18 @@ const newsreader = Newsreader({
 });
 
 /**
- * Google Search Console ownership token for techenzo.vercel.app, issued
- * 2026-09-05. Public by design — see the note on `verification` below.
- * Replace this when the property moves to a custom domain.
+ * Google Search Console ownership token for the techenzo.vercel.app URL-prefix
+ * property, issued 2026-09-05. Public by design — see the note on
+ * `verification` below.
+ *
+ * Tokens are per property, not per site: a token copied from a different
+ * property (or a property that was later removed and re-added) verifies
+ * nothing, and Search Console reports only that verification failed, never that
+ * the token belongs to something else. Take this value from the HTML tag panel
+ * of the property it is meant to verify. Replace it when the property moves to
+ * a custom domain, which is a new property and therefore a new token.
  */
-const GOOGLE_SITE_VERIFICATION = "ddPdbIbBkeQgGWoWvhjulP7ZUdwIjvS5gHxQsMLM8sI";
+const GOOGLE_SITE_VERIFICATION = "GV9GSSzVr3RIb9wc0tc1zX-zb2RxBrTJQ0o43A_4lAI";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
