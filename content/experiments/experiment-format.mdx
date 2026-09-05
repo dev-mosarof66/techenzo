@@ -8,7 +8,7 @@ publishedAt: "2026-09-05"
 tags:
   - Format
   - Meta
-draft: true
+draft: false
 results:
   - metric: p95 latency
     value: 31 ms
@@ -50,16 +50,16 @@ tables:
         values: ["252", "348", "301"]
 ---
 
-<Callout label="Read this first">
-This file is the format reference, not a result. Every number below is a
-placeholder chosen to demonstrate a component. It is marked `draft: true`, so it
-renders on localhost and is excluded from the production build, the sitemap and
-the RSS feed.
+<Callout label="Illustrative — not a measurement">
+This page documents the format a Techenzo experiment is published in. Every
+figure on it is a placeholder chosen to exercise a component, not a benchmark
+result: nothing here was measured, and the engine names below should not be
+read as a comparison between them. Real experiments state their hardware,
+dataset and run count in the `conditions` line at the foot of the page.
 </Callout>
 
-Copy this file, change the frontmatter, replace the prose, and delete this
-callout. The section headings below are the expected order, and the loader
-refuses to build without a `## Limitations` section.
+The section headings below are the expected order, and the loader refuses to
+build an experiment without a `## Limitations` section.
 
 ## Problem
 
@@ -177,7 +177,12 @@ Link the repo and give the exact commands. If a reader cannot re-run it, the
 numbers are a claim rather than a measurement.
 
 ```bash title="terminal"
-git clone https://github.com/techenzo/retrieval-bench
-cd retrieval-bench
+git clone <the experiment's repo>
+cd <repo>
 pnpm install && pnpm bench --dataset 1m --runs 10
 ```
+
+A real experiment links a repository that exists and pins the commit the
+numbers came from. A "Reproduce" section a reader cannot actually run is worse
+than no "Reproduce" section, because it implies a verification nobody
+performed.

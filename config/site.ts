@@ -1,9 +1,37 @@
+/**
+ * The origin every canonical, sitemap entry, OG tag and JSON-LD `url` is built
+ * from. Getting this wrong is not a cosmetic bug: a canonical pointing at a
+ * host that does not resolve tells a crawler the real page lives somewhere
+ * unreachable, and the page it was served is dropped rather than indexed.
+ *
+ * Resolution order, most specific first:
+ *
+ *  1. `NEXT_PUBLIC_SITE_URL` — set this the moment a custom domain is live.
+ *  2. `VERCEL_PROJECT_PRODUCTION_URL` — the project's STABLE production host.
+ *     Deliberately not `VERCEL_URL`, which is unique per deployment: canonicals
+ *     built from it would point at a build-specific host that is superseded on
+ *     the next push, so every page would name a different "real" URL each time.
+ *  3. localhost, for `next dev` with no environment at all.
+ *
+ * All three are read at build time on the server. No client component reads
+ * `site.url`, so nothing here reaches the browser bundle.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercel) return `https://${vercel}`;
+
+  return "http://localhost:3000";
+}
+
 export const site = {
   name: "Techenzo",
   tagline: "Building real products with AI.",
   description:
     "We design, build and ship AI systems — then publish how they actually perform.",
-  url: "https://techenzo.com",
+  url: resolveSiteUrl(),
   founder: {
     name: "Mosarof Hossain",
     roles: ["Full-stack engineer", "AI systems", "Product"],

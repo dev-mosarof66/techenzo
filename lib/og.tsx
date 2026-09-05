@@ -128,7 +128,11 @@ export async function renderBrandCard({
               color: "#838A94",
             }}
           >
-            <div style={{ display: "flex" }}>techenzo.com</div>
+            {/* Derived, not hardcoded: this strip is the only place a reader
+                sees the site's address on a social card, and a card advertising
+                a host the site is not actually served from is a broken promise
+                one click later. Follows site.url wherever it points. */}
+            <div style={{ display: "flex" }}>{new URL(site.url).host}</div>
             <div style={{ display: "flex", color: "#FF5A33" }}>
               Building · Shipping · Measuring
             </div>

@@ -8,14 +8,13 @@ category: AI · Developer tool
 problem: Vector store benchmarks come from vendors, use different corpora, and rarely report recall — so no two numbers can be compared.
 solution: One workload definition, run against every engine with shared timing and scoring code. The engine is the only variable.
 startedAt: "2026-06"
-draft: true
+draft: false
 technologies:
   - Next.js
   - TypeScript
   - Postgres
   - pgvector
   - Qdrant
-githubUrl: https://github.com/techenzo/retrieval-bench
 features:
   - title: One workload, four engines
     body: Define the corpus and the query set once. The harness handles indexing, warm-up and teardown per engine.
@@ -48,10 +47,11 @@ changelog:
     text: First working harness — pgvector only, latency only.
 ---
 
-<Callout label="Draft">
-This product page is a working example of the template while Retrieval Bench is
-still being built. It is marked `draft: true`, so it renders on localhost and is
-excluded from the production build, the sitemap and the RSS feed.
+<Callout label="In development">
+Retrieval Bench is being built in the open and has not shipped. This page
+describes what it is meant to do and how it is put together; there is no
+download, no public repository yet, and no published results. When there are
+numbers, they will appear in the Lab with their conditions attached.
 </Callout>
 
 ## Problem
