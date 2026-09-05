@@ -9,3 +9,6 @@ build/
 next-env.d.ts
 .vercel
 *.tsbuildinfo
+
+# Generated YouTube thumbnails — scripts/thumbnail.mjs output, not site assets.
+thumbnails/
