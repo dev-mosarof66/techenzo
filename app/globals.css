@@ -462,3 +462,121 @@
   margin: 2em 0 0.5em;
   font-size: var(--text-h3);
 }
+
+/* Hero entrance — spec §6.2.2. Pure CSS: each element carries its place in the
+   sequence as --hero-step, 60ms apart, so the whole run lands inside ~700ms.
+   `both` holds the start state through the delay; reduced motion collapses the
+   animation to its end state via the global rule in tokens.css. */
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.hero-in {
+  animation: hero-in var(--dur-deliberate) var(--ease-entrance) both;
+  animation-delay: calc(var(--hero-step, 0) * 60ms);
+}
+
+/* Hero spotlight — an accent copy of the grid field, shown only in a soft
+   circle under the mouse. --mx/--my are written by HeroSpotlight. */
+.hero-spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--accent) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--accent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-standard);
+  -webkit-mask-image: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgb(0 0 0 / 0.55), transparent 70%);
+  mask-image: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgb(0 0 0 / 0.55), transparent 70%);
+}
+.hero-spot:hover::after { opacity: 1; }
+@media (hover: none), (forced-colors: active) {
+  .hero-spot::after { display: none; }
+}
+
+/* Rotating headline word — rolls up into its slot. */
+@keyframes hero-word {
+  from { opacity: 0; transform: translateY(70%); }
+  to { opacity: 1; transform: none; }
+}
+.hero-word { animation: hero-word var(--dur-deliberate) var(--ease-entrance) both; }
+
+/* "Now building" dot — a slow ring, the one loop on the page. */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(3); opacity: 0; }
+}
+.pulse-dot { position: relative; }
+.pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: pulse-ring 1.8s var(--ease-exit) infinite;
+}
+
+/* Lab card bars grow up once, after the hero lands. */
+@keyframes bar-up {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.bar-up {
+  transform-origin: bottom;
+  animation: bar-up 700ms var(--ease-entrance) both;
+  animation-delay: calc(500ms + var(--bar-step, 0) * 80ms);
+}
+
+/* Lead score ring sweeps from empty to its value. */
+@keyframes ring-in {
+  from { stroke-dashoffset: 100; }
+}
+.ring-in { animation: ring-in 1100ms var(--ease-entrance) 400ms both; }
+
+/* Headline underline draws itself once. */
+@keyframes swoosh-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+.swoosh path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: swoosh-draw 800ms var(--ease-entrance) 450ms forwards;
+}
+
+/* Hero cards drift a few pixels, each out of phase with the next — at every
+   width, since the collage keeps its composition on phones too. */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float-y {
+  animation: float-y 6s ease-in-out infinite;
+  animation-delay: calc(var(--float-step, 0) * -1.3s);
+}
+
+/* Custom dropdown menu — drops in from just under its trigger. */
+@keyframes select-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+.select-menu { animation: select-menu-in var(--dur-base) var(--ease-entrance); }
+
+/* Form fields show focus once — through their own accent border and soft ring
+   (set on the field, or on the wrapping pill for the newsletter) — instead of
+   that plus the global outline above, which drew a second ring around them. */
+input:not([type="checkbox"]):not([type="radio"]):focus-visible,
+textarea:focus-visible,
+[role="combobox"]:focus-visible {
+  outline: none;
+}

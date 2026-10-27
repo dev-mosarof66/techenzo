@@ -92,7 +92,7 @@ export const site = {
     linkedin: undefined as string | undefined,
     youtube: undefined as string | undefined,
     instagram: undefined as string | undefined,
-    email: "hello@techenzo.com",
+    email: "techenzo.official@gmail.com",
   },
 } as const;
 
@@ -127,6 +127,7 @@ export const nav = [
   { index: "03", label: "Lab", href: "/lab" },
   { index: "04", label: "Writing", href: "/writing" },
   { index: "05", label: "About", href: "/about" },
+  { index: "06", label: "Contact", href: "/contact" },
 ] as const;
 
 export const footerColumns = [
@@ -150,6 +151,7 @@ export const footerColumns = [
   {
     heading: "Connect",
     links: [
+      { label: "Contact", href: "/contact" },
       ...socialProfiles.map((profile) => ({ ...profile, external: true })),
       { label: "Email", href: `mailto:${site.social.email}`, external: true },
     ],
