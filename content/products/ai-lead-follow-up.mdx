@@ -1,0 +1,92 @@
+---
+name: AI Lead Follow-up
+tagline: Every lead gets a scored, personal reply the minute it arrives — and the hot ones ping the owner.
+description: An n8n workflow that takes a lead from a contact form, has an AI model score it 0–100 and write a personal reply, sends that reply, logs the lead to Google Sheets and alerts the owner when the lead is hot.
+status: building
+featured: true
+category: AI · Automation
+problem: Small businesses reply to leads hours later, or never — by then the lead has already talked to a competitor.
+solution: One workflow catches the lead, scores it, writes and sends a personal reply, logs it, and alerts the owner only when the score says it is worth their time.
+startedAt: "2026-10"
+draft: false
+image: /products/ai-lead-follow-up.png
+technologies:
+  - n8n
+  - Gemini
+  - Gmail
+  - Google Sheets
+  - Next.js
+features:
+  - title: Score and reply in one call
+    body: A single model call returns a 0–100 score, a category, the reason, a subject line and the reply itself.
+  - title: Structured output, not free text
+    body: A structured output parser forces clean JSON, so nothing downstream breaks on an unexpected sentence.
+  - title: Three things at once
+    body: The reply is sent, the lead is logged and the hot-lead check runs in parallel from one lead record.
+  - title: The owner only sees the good ones
+    body: Leads scoring 70 or above trigger an alert email. Everything else is handled and logged without a ping.
+  - title: Response time on every row
+    body: The lead record stamps when the lead arrived and when the reply went, so the sheet shows real response times.
+architecture:
+  flow: [Webhook, Clean Lead, AI Score & Reply, Lead Record, Reply · Log · Alert]
+  steps:
+    - The website's contact form posts the lead server to server to an n8n webhook, guarded by a shared-secret header.
+    - Clean Lead trims fields, lowercases the email and stamps the arrival time.
+    - Gemini scores the lead and writes the reply; a structured output parser holds it to a fixed JSON shape.
+    - Lead Record assembles one row, then the reply is sent, the row goes to Google Sheets, and a score of 70+ alerts the owner.
+stack:
+  - layer: Workflow
+    items: [n8n, Webhook, IF]
+  - layer: AI
+    items: [Gemini, Structured Output Parser]
+  - layer: Delivery
+    items: [Gmail, Google Sheets]
+  - layer: Intake
+    items: [Next.js contact form]
+changelog:
+  - date: "2026-10-27"
+    text: Intake moved from the n8n form to a webhook fed by the techenzo.com contact form; model switched to Gemini.
+---
+
+<Callout label="In development">
+AI Lead Follow-up is being built in the open. The workflow runs end to end, but
+there are no published numbers yet — response time and cost per lead will land
+in the Lab with their conditions attached once it has handled enough real leads
+to be worth reporting.
+</Callout>
+
+## Problem
+
+Most small businesses reply to a new lead hours later, or not at all. By the
+time someone gets back to them, the lead has usually spoken to a competitor —
+and the owner's time goes to triaging an inbox instead of to the leads that
+were ever going to buy.
+
+## Solution
+
+One workflow handles the whole first touch. Every lead gets a personal reply
+that mentions what they actually asked about, every lead is logged with its
+score and the reason for it, and the owner hears about a lead only when it
+scores high enough to be worth a conversation.
+
+<Features />
+
+## How it works
+
+<Architecture />
+
+The lead arrives from the techenzo.com contact form, sent server to server so
+the webhook URL never reaches the browser. The shared secret travels in a
+header that the Webhook node checks, because anyone who found an open URL
+could otherwise spend AI credits and send real email.
+
+One model call does both jobs — score and reply — and the structured output
+parser is what makes that safe: the downstream nodes read named fields, not
+whatever the model felt like writing.
+
+## Status
+
+The workflow runs end to end against test leads. What is still to come: real
+traffic through the site's contact form, and a Lab write-up with the measured
+response time, cost per lead, and where the model's scores disagreed with a
+human's.

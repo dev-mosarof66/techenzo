@@ -16,7 +16,8 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Transparent at rest, hairline + blur once the page moves — spec §7.1.
+  // A floating pill, frosted at rest; once the page moves it picks up a
+  // stronger rule and the floating-layer shadow so it reads above the content.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -28,19 +29,19 @@ export function Navbar() {
 
   return (
     <>
-      <header
-        className={cn(
-          "sticky top-0 z-50 h-[var(--nav-height)] transition-[background-color,border-color,backdrop-filter] duration-[var(--dur-base)]",
-          scrolled
-            ? "border-b border-line bg-[color-mix(in_srgb,var(--bg)_72%,transparent)] backdrop-blur-[12px] backdrop-saturate-[1.4]"
-            : "border-b border-transparent bg-transparent",
-        )}
-      >
-        <div className="mx-auto flex h-full max-w-[var(--container-default)] items-center justify-between gap-5 px-[var(--page-pad)]">
+      <header className="pointer-events-none sticky top-0 z-50 px-[var(--page-pad)] pt-3">
+        <div
+          className={cn(
+            "pointer-events-auto mx-auto flex h-14 max-w-[980px] items-center justify-between gap-5 rounded-full border pr-2 pl-5",
+            "bg-[color-mix(in_srgb,var(--bg)_72%,transparent)] backdrop-blur-[12px] backdrop-saturate-[1.4]",
+            "transition-[border-color,box-shadow] duration-[var(--dur-base)]",
+            scrolled ? "border-line-strong shadow-[var(--shadow-layer)]" : "border-line",
+          )}
+        >
           <Wordmark />
 
           <nav aria-label="Main" className="hidden lg:block">
-            <ul className="flex items-center gap-6">
+            <ul className="flex items-center gap-1">
               {nav.map((item) => {
                 const active =
                   pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -50,10 +51,10 @@ export function Navbar() {
                       href={item.href}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "t-body-sm inline-block py-0.5 transition-colors duration-[var(--dur-fast)]",
+                        "t-body-sm inline-block rounded-full px-3.5 py-1.5 transition-colors duration-[var(--dur-fast)]",
                         active
-                          ? "border-b border-accent text-ink"
-                          : "link-draw text-ink-2 hover:text-ink",
+                          ? "bg-raised text-ink"
+                          : "text-ink-2 hover:bg-raised hover:text-ink",
                       )}
                     >
                       {item.label}
@@ -64,14 +65,14 @@ export function Navbar() {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {site.social.github ? (
               <a
                 href={site.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Techenzo on GitHub"
-                className="hidden size-8 place-items-center rounded-sm text-ink-3 transition-colors duration-[var(--dur-fast)] hover:text-ink sm:grid"
+                className="hidden size-9 place-items-center rounded-full text-ink-3 transition-colors duration-[var(--dur-fast)] hover:bg-raised hover:text-ink sm:grid"
               >
                 <GitHubIcon size={18} />
               </a>
@@ -82,7 +83,7 @@ export function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Techenzo on X"
-                className="hidden size-8 place-items-center rounded-sm text-ink-3 transition-colors duration-[var(--dur-fast)] hover:text-ink sm:grid"
+                className="hidden size-9 place-items-center rounded-full text-ink-3 transition-colors duration-[var(--dur-fast)] hover:bg-raised hover:text-ink sm:grid"
               >
                 <XIcon size={16} />
               </a>
@@ -94,7 +95,7 @@ export function Navbar() {
               onClick={() => setMenuOpen(true)}
               aria-label="Open navigation"
               aria-expanded={menuOpen}
-              className="-mr-2 grid size-11 place-items-center rounded-sm text-ink-2 hover:text-ink lg:hidden"
+              className="grid size-10 place-items-center rounded-full text-ink-2 hover:bg-raised hover:text-ink lg:hidden"
             >
               <Menu size={24} strokeWidth={1.5} aria-hidden="true" />
             </button>

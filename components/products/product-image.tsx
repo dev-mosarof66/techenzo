@@ -36,7 +36,9 @@ export function ProductImage({
           height={1500}
           sizes={sizes}
           priority={priority}
-          className="size-full object-cover"
+          // Contain, not cover: workflow and diagram screenshots are wider than
+          // 16:10, and cropping them cuts off the ends of the flow.
+          className="size-full object-contain"
         />
       ) : (
         <div className="grid size-full place-items-center">

@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     return json(
       {
         ok: false,
-        error: "The newsletter isn't connected yet. Email hello@techenzo.com and I'll add you.",
+        error: "The newsletter isn't connected yet. Email techenzo.official@gmail.com and I'll add you.",
       },
       503,
     );

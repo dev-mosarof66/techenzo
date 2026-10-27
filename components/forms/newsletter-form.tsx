@@ -79,7 +79,13 @@ export function NewsletterForm({
         </p>
       ) : null}
 
-      <div className="flex max-w-md flex-wrap gap-2.5">
+      {/* One pill: the field and the button share a rounded bar, and the bar —
+          not the bare input — answers focus and errors. */}
+      <div
+        className={`flex max-w-md items-center gap-2 rounded-full border bg-raised p-1.5 pl-5 transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus-within:border-accent focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--accent)_22%,transparent)] ${
+          status === "error" ? "border-status-regression" : "border-control"
+        }`}
+      >
         <label htmlFor="newsletter-email" className="sr-only">
           Email address
         </label>
@@ -95,14 +101,12 @@ export function NewsletterForm({
           disabled={status === "submitting"}
           aria-invalid={status === "error" || undefined}
           aria-describedby={error ? "newsletter-error" : undefined}
-          className={`h-10 min-w-0 flex-1 rounded-sm border bg-raised px-3 text-sm text-ink transition-colors duration-[var(--dur-fast)] placeholder:text-ink-3 focus:border-accent disabled:opacity-60 ${
-            status === "error" ? "border-status-regression" : "border-control"
-          }`}
+          className="h-10 min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-3 focus-visible:outline-none disabled:opacity-60"
         />
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-sm bg-accent px-4 text-sm font-medium text-on-accent transition-colors duration-[var(--dur-fast)] hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-on-accent shadow-[0_8px_30px_-8px_color-mix(in_srgb,var(--accent)_60%,transparent)] transition-colors duration-[var(--dur-fast)] hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "submitting" ? (
             <span
